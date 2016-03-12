@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1457330332 source:/home/stav/maman14/mmn14/main.c
+	<stdio.h>
+	<stdlib.h>
+
+1457761612 source:/home/stav/maman14/mmn14/firstPass.c
+	<stdio.h>
+	<stdlib.h>
+
+1457648573 source:/home/stav/maman14/mmn14/commonFuncs.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+
