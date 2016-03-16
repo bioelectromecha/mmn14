@@ -2,7 +2,7 @@
 
 
 
-/*----------------------------------------------------------*/
+
 char* substring(char* stringFrom,int length){
     char *newString=(char*)malloc(sizeof(char)*length);
     strncpy(newString, stringFrom,length);
@@ -10,7 +10,7 @@ char* substring(char* stringFrom,int length){
 }
 
 /*----------------------------------------------------------------------------*/
-int checkLetterOrNumber(char c){
+int checkIfLeterOrNumber(char c){
     if (checkIfLetters(c) == 1){
         return 1;
     }
@@ -20,26 +20,16 @@ int checkLetterOrNumber(char c){
     return 0;
 }
 /*----------------------------------------------------------------------------*/
-/* move the file pointer to the start of the next line */
-void eatLine(FILE * fp) {
+void line_eater(FILE * fp) {
 	char c= fgetc(fp);
 	while (c != '\n' && c!=EOF) {
 		c=fgetc(fp);
 	}
 }
 /*----------------------------------------------------------------------------*/
-/* move the string pointer beyond all the spaces in the line */
-void eatSpace(Data * data){
-    while(isspace(*(data->line))){
-        if (*(data->line)== '\n' || *(data->line) == EOF){
-               return;
-        }
-        data->line++;
-    }
-}
-/*----------------------------------------------------------------------------*/
-int checkLetters(char c){
+int checkIfLetters(char c){
     int numOfLetters = 26;
+
     if (checkIfInLimit(c,FIRST_CAPITAL_LETTER_ASCII,numOfLetters) == 1){
         return 1;
     }
@@ -50,7 +40,7 @@ int checkLetters(char c){
 }
 
 /*----------------------------------------------------------------------------*/
-int checkInLimit(char c,int startLimit,int length){
+int checkIfInLimit(char c,int startLimit,int length){
     int index;
     for (index = 0; index < length;index++){
             if ((int)c == startLimit+index){

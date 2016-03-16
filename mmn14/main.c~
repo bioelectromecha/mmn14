@@ -1,4 +1,14 @@
+#include <stdio.h>
+#include <stdlib.h>
 
+int space_eater(char *);
+void line_eater(FILE *fp);
+int firstParse(FILE *fp);
+
+/* Danny said it's okay to assume there's a max length for a name variable, so this is it */
+#define MAX_NAME_LEN 80
+
+int firstPassCreator(FILE *file);
 
 int main(int argc, char* argv[]){
 
