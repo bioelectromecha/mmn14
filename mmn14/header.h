@@ -25,6 +25,13 @@
 #define FIRST_CAPITAL_LETTER_ASCII 65
 #define FIRST_LOWER_LETTER_ASCII 97
 
+#define FALSE 0
+#define TRUE 1
+
+#define EXIT 0
+#define GET_NUMBER 1
+#define GET_COMMA 2
+
 /*-------------------------------------------*/
 /*data structures */
 typedef struct
@@ -38,10 +45,24 @@ typedef struct
 typedef struct
 {
     char * line;
+    /* tag counter */
+    int tc;
+    /* line counter */
     int lc;
+    /* directive counter */
     int dc;
+    /* instruction counter */
     int ic;
-    Tag tag[MAX_ASM_LINES];
+    /* extern counter */
+    int exc;
+    /* entry counter */
+    int enc;
+
+    Tag tagArr[MAX_ASM_LINES];
+    int directiveArr[MAX_ASM_LINES];
+    char externArr[MAX_ASM_LINES][30];
+    char entryArr[MAX_ASM_LINES][30];
+    /* a better way to do these would be to have a function that creates a new array and copies the values there each time an element is added */
 } Data;
 
 /*-------------------------------------------*/

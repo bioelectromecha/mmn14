@@ -6,7 +6,7 @@
 char* substring(char* stringFrom,int length){
     char *newString=(char*)malloc(sizeof(char)*length);
     strncpy(newString, stringFrom,length);
-    return newString;
+    return newString;   +
 }
 
 /*----------------------------------------------------------------------------*/
@@ -48,7 +48,14 @@ int checkLetters(char c){
     }
     return 0;
 }
-
+/*----------------------------------------------------------------------------*/
+int checkUpperCase(char c){
+    int numOfLetters = 26;
+    if (checkIfInLimit(c,FIRST_CAPITAL_LETTER_ASCII,numOfLetters) == 1){
+        return 1;
+    }
+    return 0;
+}
 /*----------------------------------------------------------------------------*/
 int checkInLimit(char c,int startLimit,int length){
     int index;
@@ -60,7 +67,6 @@ int checkInLimit(char c,int startLimit,int length){
         }
 
     return 0;
-
 }
 
 

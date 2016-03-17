@@ -19,6 +19,13 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="commonFuncs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="firstPass.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="header.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
