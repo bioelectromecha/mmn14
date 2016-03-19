@@ -4,12 +4,12 @@ LOOP:	jmp END
 
 
 	prn #-5
-	sub r1,r4
+LOOP:	sub r1,r4
 	inc K
 
 	mov **,r3
 	bne LOOP
 END:	stop
-STR:	.string abcdef
+STR:	.string "abcdef
 LENGTH:	.data 6,-9,15
 K:	.data 2

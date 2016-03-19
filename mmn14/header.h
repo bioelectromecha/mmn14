@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 
 /*-------------------------------------------*/
@@ -34,13 +35,19 @@
 
 /*-------------------------------------------*/
 /*data structures */
-typedef struct
-{
+typedef struct{
     char name[30];
     int address;
     int external;
     int command;
 } Tag;
+
+typedef struct{
+    char name[30];
+} Entry;
+typedef struct{
+    char name[30];
+} Extern;
 
 typedef struct
 {
@@ -58,15 +65,32 @@ typedef struct
     /* entry counter */
     int enc;
 
-    Tag tagArr[MAX_ASM_LINES];
-    int directiveArr[MAX_ASM_LINES];
-    char externArr[MAX_ASM_LINES][30];
-    char entryArr[MAX_ASM_LINES][30];
-    /* a better way to do these would be to have a function that creates a new array and copies the values there each time an element is added */
+    Tag * tagArr;
+    int * directiveArr;
+    Extern * externArr;
+    Entry * entryArr;
 } Data;
 
 /*-------------------------------------------*/
 /*function declarations */
+int firstPassManager(FILE *file);
 
+int lineValidator(Data * data,FILE *file);
+int lineHandler(Data * data);
+int directiveHandler(Data * data, char * tag);
+int tagDupCheck(Data *data, char *tag);
+void getTag(Data * data,char * tagGet);
+int entryDirectiveHandler(Data * data, char * tag);
+int commandHandler(Data * data);
+int stringDirectiveHandler(Data * data, char * tag);
+int externDirectiveHandler(Data * data, char * tag);
+int dataDirectiveHandler(Data * data, char * tag);
 
+void eatLine(FILE * fp);
+void eatSpace(Data * data);
+void substring(char* stringTo,char* stringFrom,int length);
+int checkLetterOrNumber(char c);
+int checkLetters(char c);
+int checkUpperCase(char c);
+int checkInLimit(char c,int startLimit,int length);
 

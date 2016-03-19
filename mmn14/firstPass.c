@@ -1,23 +1,32 @@
 #include "header.h"
 
 
-
 /*----------------------------------------------------------------------------*/
 int firstPassManager(FILE *file){
+
     char lineHolder[MAX_LINE_LEN+1];
     Data data;
-    data.tc=0;
-    data.lc=0;
-    data.dc=0;
-    data.ic=0;
+    data.tc = 0;
+    data.lc = 0;
+    data.dc = 0;
+    data.ic = 0;
+    char* inst_name[] = {"mov", "cmp", "add", "sub", "lea", "not", "clr", "inc", "dec", "jmp", "bne", "red", "prn", "jsr", "rts", "stop"};
+    int operandnum[] = {2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0};
+
     /* NULL means EOF. When we reach EOF it means we're done */
     while(fgets(lineHolder,MAX_LINE_LEN,file) != NULL ){
+        printf("%s\n",lineHolder);
         data.line=lineHolder;
         data.lc++;
         if (lineValidator(&data,file) == 1){
             lineHandler(&data);
         }
     }
+    while(data.dc>=0){
+        printf("%d\n",data.directiveArr[data.dc]);
+        data.dc--;
+    }
+
     return 0;
 }
 
@@ -47,25 +56,23 @@ int lineValidator(Data * data,FILE *file){
 
 /*----------------------------------------------------------------------------*/
 int lineHandler(Data * data){
-    char * tag;
-    int tagstate = FALSE;
-    tag = getTag(data);
+    char tag[31];
+    getTag(data,tag);
 
     /* there's a tag at the start of the line */
     if (tag != NULL){
         /*printf("%s\n",tag);*/
-        if (tagDupCheck(tag) == 0){
-        printf("[Error] on line %d: you have the tag %s more then once.\n",data->lc, tag);
+        if (tagDupCheck (data, tag) == 1){
+            printf("[Error] on line %d: you have the tag %s more then once.\n",data->lc, tag);
             return 0;
         }
-        tagstate = TRUE;
         eatSpace(data);
     }
     if(*(data->line)=='.'){
-        return  directiveHandler(Data * data, tag)l
+        return  directiveHandler(data, tag);
     }
-    if(checkUpperCase(*(data->line))==1){
-        return commandHandler(Data * data);
+    if(checkUpperCase(*(data->line))==0){
+        return commandHandler(data);
     }
     printf("[Error] on line %d: line isn't valid a input\n",data->lc);
     return 0;
@@ -76,43 +83,43 @@ int tagDupCheck(Data * data, char * tag){
     int index;
     for (index = 0; index< data->tc;index++){
         if (strcmp(data->tagArr[index].name,tag) == 0){
-            return 0;
+            return 1;
         }
     }
     return 0;
 }
 /*----------------------------------------------------------------------------*/
-char * getTag(Data * data){
-    static char tag[30];
-    int counter=0;
-    char * c = data->line+1;
+void getTag(Data * data,char * tagGet){
+    char tag[30];
+    int counter = 0;
+    char * c = data-> line + 1;
     if (checkLetters(*(data->line))== 0){
-        return NULL;
+        tagGet = NULL;
+        return;
     }
     while(!isspace(*c) && (*c != ':')){
         if (checkLetterOrNumber(*c) == 0){
-            return NULL;
+            tagGet = NULL;
+            return;
+
         }
         counter++;
         c++;
     }
     if (*c == ':'){
-        while(counter>=0){
-            *tag=*(data->line);
-            data->line++;
-            tag++;
-            counter--;
-        }
-        *tag='\0';
-        data->line++;
+        substring(tag,data-> line,counter);
+        data->line += counter+2;
+        tag[counter] = '\0';
+
     }
-    return tag;
+    strcpy(tagGet,tag);
 }
 /*----------------------------------------------------------------------------*/
 int directiveHandler(Data * data, char * tag){
     char s[6];
-    sscanf((data->line+1),"%s",s);
-    data->line+1+=strlen(s)+1;
+    data->line++;
+    sscanf((data->line),"%s",s);
+    data->line+=strlen(s)+1;
 
     eatSpace(data);
 
@@ -148,7 +155,7 @@ int dataDirectiveHandler(Data * data, char * tag){
     while(state != EXIT){
         eatSpace(data);
         if(state==GET_NUMBER){
-            if (sscanf(data->line, "%d", &num)>0) {
+            if (sscanf(data->line, "%d", &num) == 0) {
                 printf("[Error] on line %d:- malformed data directive - missing number \n", data->lc);
                 return 0;
             }
@@ -183,7 +190,7 @@ int dataDirectiveHandler(Data * data, char * tag){
     }
     for(i=0;i<=dcounter;i++){
         data->directiveArr[data->dc]=numberArray[dcounter];
-        dc++;
+        data->dc ++;
     }
     return 1;
 }
@@ -214,7 +221,7 @@ int stringDirectiveHandler(Data * data, char * tag){
         data->line++;
         /* check for extra characters after the string ending (it's not a valid string directive that way) */
         eatSpace(data);
-        if(letter!='\n' && letter!=EOF){
+        if ((*(data->line) != '\n') && (*(data->line) != EOF)) {
             printf("[Error] on line %d: malformed string directive - extra characters after string ending\n",data->lc);
             return 0;
         }
@@ -237,8 +244,8 @@ int stringDirectiveHandler(Data * data, char * tag){
     return 1;
 }
 /*----------------------------------------------------------------------------*/
-int externHandler(Data * data, char * tag){
-    char tagName[30];
+int externDirectiveHandler(Data * data, char * tag){
+    char* tagName ="";
     int i=0;
     if(tag != NULL){
         printf("[Error] on line %d: a .extern directive can't start with a tag\n",data->lc);
@@ -248,19 +255,19 @@ int externHandler(Data * data, char * tag){
         printf("[Error] on line %d: empty directive\n",data->lc);
         return 0;
     }
-    tagName=getTag(data);
+    getTag(data,tagName);
     if(tagName==NULL){
         printf("[Error] on line %d: malformed .extern directive\n",data->lc);
         return 0;
     }
     for(i=0;i<=(data->enc);i++){
-        if(strcmp(data->entryArr[enc],tagName)==0){
+        if(strcmp(data->entryArr[data->enc],tagName)==0){
             printf("[Error] on line %d: .extern directive name already defined as .entry\n",data->lc);
             return 0;
         }
     }
      for(i=0;i<=(data->enc);i++){
-        if(strcmp(data->externArr[enc],tagName)==0){
+        if(strcmp(data->externArr[data->enc],tagName)==0){
             printf("[Error] on line %d: .extern directive name already exists\n",data->lc);
             return 0;
         }
@@ -270,29 +277,30 @@ int externHandler(Data * data, char * tag){
     return 1;
 }
 /*----------------------------------------------------------------------------*/
-int entryHandler(Data * data, char * tag){
+int entryDirectiveHandler(Data * data, char * tag){
     char tagName[30];
     int i=0;
-    printf("[Error] on line %d: a .entry directive can't start with a tag\n",data->lc);
+    if(tag != NULL){
+        printf("[Error] on line %d: a .entry directive can't start with a tag\n",data->lc);
         return 0;
     }
     if(*(data->line) =='\n' || *(data->line)==EOF){
         printf("[Error] on line %d: empty directive\n",data->lc);
         return 0;
     }
-    tagName=getTag(data);
-     if(tagName==NULL){
-        printf("[Error] on line %d: malformed .extern directive\n",data->lc);
+    getTag(data,tagName);
+    if(tagName==NULL){
+        printf("[Error] on line %d: malformed .entry directive\n",data->lc);
         return 0;
     }
     for(i=0;i<=(data->enc);i++){
-        if(strcmp(data->entryArr[enc],tagName)==0){
+        if(strcmp(data->entryArr[data->enc],tagName)==0){
             printf("[Error] on line %d: .entry directive name already exists\n",data->lc);
             return 0;
         }
     }
      for(i=0;i<=(data->enc);i++){
-        if(strcmp(data->externArr[enc],tagName)==0){
+        if(strcmp(data->externArr[data->enc],tagName)==0){
             printf("[Error] on line %d: .entry directive name already defined as .extern\n",data->lc);
             return 0;
         }
@@ -301,4 +309,7 @@ int entryHandler(Data * data, char * tag){
     strcpy(data->entryArr[data->enc],tagName);
     return 1;
 }
-
+int commandHandler(Data * data){
+    printf("this line is a command\n");
+    return 0;
+}

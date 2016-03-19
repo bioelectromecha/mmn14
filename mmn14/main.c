@@ -1,4 +1,4 @@
-
+#include "header.h"
 
 int main(int argc, char* argv[]){
 
@@ -46,7 +46,7 @@ argc = 2;
             printf("ERROR The file named %s %s doesn't exist\n",argv[0],filename);
             continue;
         }
-        firstPassCreator(fp);
+        firstPassManager(fp);
         /* close the file after playing around with it */
         fclose(fp);
       }

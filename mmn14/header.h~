@@ -1,8 +1,14 @@
+
+
+
+
+
 /*-------------------------------------------*/
 /*standard library imports */
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 
 /*-------------------------------------------*/
@@ -20,13 +26,71 @@
 #define FIRST_CAPITAL_LETTER_ASCII 65
 #define FIRST_LOWER_LETTER_ASCII 97
 
+#define FALSE 0
+#define TRUE 1
+
+#define EXIT 0
+#define GET_NUMBER 1
+#define GET_COMMA 2
+
+/*-------------------------------------------*/
+/*data structures */
+typedef struct{
+    char name[30];
+    int address;
+    int external;
+    int command;
+} Tag;
+
+typedef struct{
+    char name[30];
+} Entry;
+typedef struct{
+    char name[30];
+} Extern;
+
+typedef struct
+{
+    char * line;
+    /* tag counter */
+    int tc;
+    /* line counter */
+    int lc;
+    /* directive counter */
+    int dc;
+    /* instruction counter */
+    int ic;
+    /* extern counter */
+    int exc;
+    /* entry counter */
+    int enc;
+
+    Tag * tagArr;
+    int * directiveArr;
+    Extern * externArr;
+    Entry * entryArr;
+} Data;
+
 /*-------------------------------------------*/
 /*function declarations */
+int firstPassManager(FILE *file);
 
-int space_eater(char *);
-void line_eater(FILE *fp);
-int firstParse(FILE *fp);
-int firstPassCreator(FILE *file);
+int lineValidator(Data * data,FILE *file);
+int lineHandler(Data * data);
+int directiveHandler(Data * data, char * tag);
+int tagDupCheck(Data *data, char *tag);
+void getTag(Data * data,char * tagGet);
+int entryDirectiveHandler(Data * data, char * tag);
+int commandHandler(Data * data);
+int stringDirectiveHandler(Data * data, char * tag);
+int externDirectiveHandler(Data * data, char * tag);
+int dataDirectiveHandler(Data * data, char * tag);
 
-int checkIfLetters(char c);
-int checkIfInLimit(char c,int startLimit,int length);
+void eatLine(FILE * fp);
+void eatSpace(Data * data);
+void substring(char* stringTo,char* stringFrom,int length);
+int checkLetterOrNumber(char c);
+int checkLetters(char c);
+int checkUpperCase(char c);
+int checkInLimit(char c,int startLimit,int length);
+

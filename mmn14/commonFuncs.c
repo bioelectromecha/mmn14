@@ -1,17 +1,15 @@
-
+#include "header.h"
 
 
 
 /*----------------------------------------------------------*/
-char* substring(char* stringFrom,int length){
-    char *newString=(char*)malloc(sizeof(char)*length);
-    strncpy(newString, stringFrom,length);
-    return newString;   +
+void substring(char* stringTo,char* stringFrom,int length){
+    strncpy(stringTo, stringFrom,length);
 }
 
 /*----------------------------------------------------------------------------*/
 int checkLetterOrNumber(char c){
-    if (checkIfLetters(c) == 1){
+    if (checkLetters(c) == 1){
         return 1;
     }
     if (((int)c >= 0)&&((int)c <= 9)){
@@ -40,10 +38,10 @@ void eatSpace(Data * data){
 /*----------------------------------------------------------------------------*/
 int checkLetters(char c){
     int numOfLetters = 26;
-    if (checkIfInLimit(c,FIRST_CAPITAL_LETTER_ASCII,numOfLetters) == 1){
+    if (checkInLimit(c,FIRST_CAPITAL_LETTER_ASCII,numOfLetters) == 1){
         return 1;
     }
-    if (checkIfInLimit(c,FIRST_LOWER_LETTER_ASCII,numOfLetters) == 1){
+    if (checkInLimit(c,FIRST_LOWER_LETTER_ASCII,numOfLetters) == 1){
         return 1;
     }
     return 0;
@@ -51,7 +49,7 @@ int checkLetters(char c){
 /*----------------------------------------------------------------------------*/
 int checkUpperCase(char c){
     int numOfLetters = 26;
-    if (checkIfInLimit(c,FIRST_CAPITAL_LETTER_ASCII,numOfLetters) == 1){
+    if (checkInLimit(c,FIRST_CAPITAL_LETTER_ASCII,numOfLetters) == 1){
         return 1;
     }
     return 0;
@@ -63,9 +61,7 @@ int checkInLimit(char c,int startLimit,int length){
             if ((int)c == startLimit+index){
                 return 1;
             }
-
         }
-
     return 0;
 }
 
