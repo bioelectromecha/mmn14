@@ -1,6 +1,36 @@
 #include "header.h"
 
+/*
+ ====================================================================================
+ Date       :   20/3/2016
+
+ Authors    :   Roman Smirnov, Stav Rockah
+
+ Description: 	A C program which compiles assembly code into machine code
+
+ Input		:	Assembly file names as command line arguments
+
+ Output		:   machine code files (.o suffix), entry files, extern files
+ ====================================================================================
+ */
+
+
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: implements the first pass algorithm (from the course booklet)
+ * Input:       Assembly file names as command line arguments, without the .asm extension
+ * Output:		machine code files (.o suffix), entry files, extern files
+ */
+/*----------------------------------------------------------------------------*/
 int main(int argc, char* argv[]){
+  /* string to hold a filename after addition of the ".as" suffix */
+	/* we add 3 to the array size to hold the ".as" suffix, which is not received as input and will be included later on */
+    char filename[MAX_NAME_LEN+3];
+	/* increment variable */
+    int i;
+	/* pointer to current file */
+    FILE *fp;
 
     /* debug code
     int main(int argc, char* argv[]){
@@ -11,16 +41,6 @@ argc = 2;
 
 
 /*-------------------*/
-
-
-    /* string to hold a filename after addition of the ".as" suffix */
-	/* we add 3 to the array size to hold the ".as" suffix, which is not received as input and will be included later on */
-    char filename[MAX_NAME_LEN+3];
-	/* increment variable */
-    int i;
-	/* pointer to current file */
-    FILE *fp;
-
 
 	/* check if the program was ran with 0 arguments */
     if(argc==1)

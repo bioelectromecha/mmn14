@@ -2,7 +2,6 @@
 
 
 
-
 /*-------------------------------------------*/
 /*standard library imports */
 #include <string.h>
@@ -21,6 +20,8 @@
 #define MAX_ASM_LINES 5000
 /* max assembly line length is 80 */
 #define MAX_LINE_LEN 80
+/* maximum length of a tag is 30 */
+#define MAX_TAG_LEN 30
 
 /* these define the ascii codes 'a' and 'A' */
 #define FIRST_CAPITAL_LETTER_ASCII 65
@@ -33,24 +34,26 @@
 #define GET_NUMBER 1
 #define GET_COMMA 2
 
+#define NUM_OF_COMMANDS 16
+
 /*-------------------------------------------*/
 /*data structures */
 typedef struct{
-    char name[30];
+    char name[MAX_TAG_LEN];
     int address;
     int external;
     int command;
 } Tag;
 
 typedef struct{
-    char name[30];
+    char name[MAX_TAG_LEN];
 } Entry;
 typedef struct{
-    char name[30];
+    char name[MAX_TAG_LEN];
 } Extern;
 
-typedef struct
-{
+typedef struct{
+
     char * line;
     /* tag counter */
     int tc;
@@ -69,15 +72,22 @@ typedef struct
     int * directiveArr;
     Extern * externArr;
     Entry * entryArr;
+
+     /* if there's an error, no need for a second pass */
+    int containError;
+
 } Data;
 
 /*-------------------------------------------*/
 /*function declarations */
 int firstPassManager(FILE *file);
 
-int lineValidator(Data * data,FILE *file);
-int lineHandler(Data * data);
-int directiveHandler(Data * data, char * tag);
+int lineHandler(Data * data, FILE *file);
+int lineLengthCheck(Data * data, FILE *file);
+int lineEmptyCheck(Data * data);
+int lineCommentCheck(Data * data);
+
+int directivesManager(Data * data, char * tag);
 int tagDupCheck(Data *data, char *tag);
 void getTag(Data * data,char * tagGet);
 int entryDirectiveHandler(Data * data, char * tag);
@@ -93,4 +103,16 @@ int checkLetterOrNumber(char c);
 int checkLetters(char c);
 int checkUpperCase(char c);
 int checkInLimit(char c,int startLimit,int length);
+
+
+
+void initializeData(Data * data);
+void addTag(Data * data, char * tag, int dirAddress);
+void addDirective(Data * data, int directive);
+void addExtern(Data * data, char * tag);
+void addEntry(Data * data, char * tag);
+void setDataFree(Data * data);
+
+int commandsManager(Data * data);
+
 

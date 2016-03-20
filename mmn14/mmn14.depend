@@ -1,31 +1,25 @@
 # depslib dependency file v1.0
-1457330332 source:/home/stav/maman14/mmn14/main.c
-	<stdio.h>
-	<stdlib.h>
-
-1457761612 source:/home/stav/maman14/mmn14/firstPass.c
-	<stdio.h>
-	<stdlib.h>
-
-1457648573 source:/home/stav/maman14/mmn14/commonFuncs.c
-	<string.h>
-	<stdio.h>
-	<stdlib.h>
-
-1458387888 source:/home/stav/Desktop/mmn14/mmn14/main.c
+1458426840 source:/home/alexandra/mmn14/mmn14/commandsManager.c
 	"header.h"
 
-1458388134 source:/home/stav/Desktop/mmn14/mmn14/commonFuncs.c
-	"header.h"
-
-1458389016 /home/stav/Desktop/mmn14/mmn14/header.h
+1458426799 /home/alexandra/mmn14/mmn14/header.h
 	<string.h>
 	<stdio.h>
 	<stdlib.h>
 	<ctype.h>
 
-1458400608 source:/home/stav/Desktop/mmn14/mmn14/firstPass.c
+1458388134 source:/home/alexandra/mmn14/mmn14/commonFuncs.c
 	"header.h"
 
-1458398343 source:/home/stav/Desktop/mmn14/mmn14/secondPass.c
+1458427331 source:/home/alexandra/mmn14/mmn14/directivesManager.c
+	"header.h"
+
+1458413254 source:/home/alexandra/mmn14/mmn14/main.c
+	"header.h"
+
+1458424922 source:/home/alexandra/mmn14/mmn14/secondPassManager.c
+	"header.h"
+
+1458426978 source:/home/alexandra/mmn14/mmn14/firstPassManager.c
+	"header.h"
 
