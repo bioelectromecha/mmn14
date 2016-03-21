@@ -40,12 +40,23 @@ void eatLine(FILE * fp) {
  */
 /*----------------------------------------------------------------------------*/
 void eatSpace(Data * data){
-    while(isspace(*(data->line))){
-        if (*(data->line)== '\n' || *(data->line) == EOF){
-               return;
+    data->line = getCharPtrBeyondSpace(data->line);
+}
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: ove the string pointer beyond all the spaces in the line
+ * Input:       pointer to Data struct
+ * Output:		nothing
+ */
+/*----------------------------------------------------------------------------*/
+char * getCharPtrBeyondSpace(char * string){
+    while(isspace(*string)){
+        if (*string== '\n' || *string== EOF){
+               return string;
         }
-        data->line++;
+        string++;
     }
+    return string;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -110,6 +121,66 @@ int checkInLimit(char c,int startLimit,int length){
             }
         }
     return 0;
+}
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: check if a line is empty or not
+ * Input:       pointer to Data struct
+ * Output:		1 if empty, 0 otherwise
+ */
+/*----------------------------------------------------------------------------*/
+int lineEmptyCheck(Data * data){
+    eatSpace(data);
+    if(*(data->line)=='\n' || *(data->line)==EOF){
+        return 1;
+    }
+    return 0;
+}
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: check whether it's a comment line
+ * Input:       pointer to Data struct
+ * Output:		1 if comment, 0 otherwise
+ */
+/*----------------------------------------------------------------------------*/
+int lineCommentCheck(Data * data){
+    if(*(data->line)==';'){
+        return 1;
+    }
+    return 0;
+}
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: get the tag from beggining of a line
+ * Input:       pointer to Data struct, pointer to a character array
+ * Output:	    if tag is found tagGet will hold the tag, tagGet will be NULL otherwise
+ */
+/*----------------------------------------------------------------------------*/
+void getTag(Data * data,char * tagGet){
+    char tag[MAX_TAG_LEN];
+    int counter = 0;
+    char * c = data-> line + 1;
+    if (checkLetters(*(data->line))== 0){
+        tagGet = NULL;
+        return;
+    }
+    while(!isspace(*c) && (*c != ':')){
+        if (checkLetterOrNumber(*c) == 0){
+            tagGet = NULL;
+            return;
+
+        }
+        counter++;
+        c++;
+    }
+    if (*c == ':'){
+        counter++;
+        strncpy(tag, data->line,counter);
+        data->line += counter+2;
+        tag[counter] = '\0';
+    }
+    strcpy(tagGet,tag);
 }
 
 
