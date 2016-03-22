@@ -23,3 +23,43 @@
 1458426978 source:/home/alexandra/mmn14/mmn14/firstPassManager.c
 	"header.h"
 
+1458591728 source:/home/stav/Desktop/mmn14-master/mmn14/commonFuncs.c
+	"main.h"
+	"commonFuncs.h"
+
+1458590210 /home/stav/Desktop/mmn14-master/mmn14/header.h
+
+1458591913 source:/home/stav/Desktop/mmn14-master/mmn14/firstPassManager.c
+	"firstPassManager.h"
+	"commonFuncs.h"
+	"directivesManager.h"
+	"commandsManager.h"
+
+1458591924 source:/home/stav/Desktop/mmn14-master/mmn14/main.c
+	"main.h"
+
+1458582950 source:/home/stav/Desktop/mmn14-master/mmn14/secondPassManager.c
+	"header.h"
+
+1458591328 source:/home/stav/Desktop/mmn14-master/mmn14/commandsManager.c
+	"main.h"
+	"commandsManager.h"
+
+1458587727 /home/stav/Desktop/mmn14-master/mmn14/main.h
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+
+1458591227 /home/stav/Desktop/mmn14-master/mmn14/commandsManager.h
+
+1458591633 /home/stav/Desktop/mmn14-master/mmn14/commonFuncs.h
+
+1458591741 source:/home/stav/Desktop/mmn14-master/mmn14/directivesManager.c
+	"main.h"
+
+1458591820 /home/stav/Desktop/mmn14-master/mmn14/firstPassManager.h
+	"main.h"
+
+1458591898 /home/stav/Desktop/mmn14-master/mmn14/directivesManager.h
+

@@ -17,7 +17,6 @@ int commandsManager(Data * data, char * tag){
 
     int commandIndex;
     int operandnum[] = {2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0};
-    printf("this line is a command\n");
 
     if (sscanf(data->line, "%4s", command) == 0){
         printf("[Error] on line %d:- command error invalid \n", data->lc);
@@ -239,6 +238,13 @@ int isTagOperand( char * operand){
     }
     return 1;
 }
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: check if the operand is empty
+ * Input:       char array containing the operand
+ * Output:		1 if empty, 0 otherwise
+ */
+/*----------------------------------------------------------------------------*/
 int isEmptyOperand(char * operand){
     operand = getCharPtrBeyondSpace(operand);
     if(*operand == '\n' || *operand==EOF){
@@ -258,48 +264,6 @@ int isRandomOperand(char * operand){
     }
     return 0;
 }
-int isSourceOperandValid(int method, char * command){
-    int commandIndex = getCommandIndex(command);
-    if(method == IMMEDIATE_OPERAND){
-        if( commandIndex == MOVE || commandIndex == CMP || commandIndex == ADD || commandIndex == SUB){
-            return 1;
-        }
-        return 0;
-    }
-    if(method == REGISTER_OPERAND){
-        if( commandIndex == MOVE || commandIndex == CMP ||
-                            commandIndex == ADD || commandIndex == SUB || commandIndex == CLR){
-            return 1;
-        }
-        return 0;
-    }
-    if(method == THREE_STAR_RANDOM_OPERAND){
-        if(commandIndex==LEA){
-            return 1;
-        }
-        return 0;
-    }
-    return 0;
-}
-int isDestinationOperandValid(int method, char * command){
-    int commandIndex = getCommandIndex(command);
-    if(method == IMMEDIATE_OPERAND){
-        if(commandIndex == CMP  || commandIndex == PRN){
-            return 1;
-        }
-        return 0;
-    }
-    if(method == REGISTER_OPERAND){
-        if( commandIndex != RTS && commandIndex != STOP){
-            return 1;
-        }
-        return 0;
-    }
-    if(method == THREE_STAR_RANDOM_OPERAND || method == TWO_STAR_RANDOM_OPERAND || method == THREE_STAR_RANDOM_OPERAND){
-        return 0;
-    }
-    if(method == TAG_OPERAND){
 
-    }
-    return 0;
-}
+
+

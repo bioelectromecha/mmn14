@@ -1,5 +1,5 @@
-#include "header.h"
-
+#include "main.h"
+#include "commonFuncs.h"
 
 
 /*----------------------------------------------------------------------------*/
@@ -49,14 +49,14 @@ void eatSpace(Data * data){
  * Output:		nothing
  */
 /*----------------------------------------------------------------------------*/
-char * getCharPtrBeyondSpace(char * string){
-    while(isspace(*string)){
-        if (*string== '\n' || *string== EOF){
-               return string;
+char* getCharPtrBeyondSpace(char* pString){
+    while(isspace(*pString)){
+        if (*pString== '\n' || *pString== EOF){
+               return pString;
         }
-        string++;
+        pString++;
     }
-    return string;
+    return pString;
 }
 
 /*----------------------------------------------------------------------------*/

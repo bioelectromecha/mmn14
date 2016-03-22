@@ -1,7 +1,7 @@
-#include "header.h"
-
-
-
+#include "firstPassManager.h"
+#include "commonFuncs.h"
+#include "directivesManager.h"
+#include "commandsManager.h"
 /*----------------------------------------------------------------------------*/
 /*
  * Description: implements the first pass algorithm (from the course booklet)
@@ -67,7 +67,7 @@ int lineHandler(Data * data,FILE *file){
         return  directivesManager(data, tag);
     }
     if(checkUpperCase(*(data->line))==0){
-        return commandsManager(data);
+        return commandsManager(data,tag);
     }
     printf("[Error] on line %d: line isn't valid a input\n",data->lc);
     data->containError=TRUE;
