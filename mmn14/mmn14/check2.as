@@ -1,0 +1,12 @@
+MAIN:,mov,***,LENGTH,
+as:,add,r2,STR,
+LOOP:,jmp,END,,
+zm:,prn,#-5,,
+AF:,sub,r1,r4,
+ZL:,inc,K,,
+,mov,**,r3,
+,bne,LOOP,,
+END:,stop,,,
+STR:,.string,abcdef,,
+LENGTH:,.data,6,-9,15
+K:,.data,2,,

@@ -1,0 +1,37 @@
+# depslib dependency file v1.0
+1458659252 source:/home/stav/Desktop/mmn14-master/mmn14/commandsManager.c
+	"header.h"
+
+1458673038 /home/stav/Desktop/mmn14-master/mmn14/header.h
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+
+1458658275 source:/home/stav/Desktop/mmn14-master/mmn14/commonFuncs.c
+	"header.h"
+
+1458645833 source:/home/stav/Desktop/mmn14-master/mmn14/directivesManager.c
+	"header.h"
+
+1458673041 source:/home/stav/Desktop/mmn14-master/mmn14/firstPassManager.c
+	"header.h"
+
+1458659988 source:/home/stav/Desktop/mmn14-master/mmn14/main.c
+	"header.h"
+
+1458664481 source:/home/stav/Desktop/mmn14-master/mmn14/passManager.c
+	"header.h"
+
+1458665312 source:/home/stav/Desktop/mmn14-master/mmn14/secondPassManager.c
+	"header.h"
+
+1458665448 source:/home/stav/Desktop/mmn14-master/mmn14/secondPassCommandManager.c
+	"header.h"
+
+1458664018 source:/home/stav/Desktop/mmn14-master/mmn14/outputManager.c
+	"header.h"
+
+1458673001 source:/home/stav/Desktop/mmn14-master/mmn14/firstPassCommandsManager.c
+	"header.h"
+
