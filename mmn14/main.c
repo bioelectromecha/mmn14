@@ -1,4 +1,4 @@
-#include "main.h"
+#include "header.h"
 
 /*
  ====================================================================================
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]){
             printf("ERROR The file named %s %s doesn't exist\n",argv[0],filename);
             continue;
         }
-        firstPassManager(fp);
+        passManager(fp);
         /* close the file after playing around with it */
         fclose(fp);
       }

@@ -1,6 +1,4 @@
-#include "main.h"
-#include "commonFuncs.h"
-
+#include "header.h"
 
 /*----------------------------------------------------------------------------*/
 /*
@@ -42,6 +40,19 @@ void eatLine(FILE * fp) {
 void eatSpace(Data * data){
     data->line = getCharPtrBeyondSpace(data->line);
 }
+
+int isEndOfLine(char* pStr){
+    while (*(pStr) != '\n' && *(pStr) != EOF){
+        if (isspace(*pStr)){
+            pStr = pStr+1;
+        }
+        else{
+            return 0;
+        }
+    }
+    return 1;
+}
+
 /*----------------------------------------------------------------------------*/
 /*
  * Description: ove the string pointer beyond all the spaces in the line
@@ -49,14 +60,14 @@ void eatSpace(Data * data){
  * Output:		nothing
  */
 /*----------------------------------------------------------------------------*/
-char* getCharPtrBeyondSpace(char* pString){
-    while(isspace(*pString)){
-        if (*pString== '\n' || *pString== EOF){
-               return pString;
+char* getCharPtrBeyondSpace(char * ptr){
+    while(isspace(*ptr)){
+        if (*ptr == '\n' || *ptr== EOF){
+               return ptr;
         }
-        pString++;
+        ptr++;
     }
-    return pString;
+    return ptr;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -162,25 +173,29 @@ void getTag(Data * data,char * tagGet){
     int counter = 0;
     char * c = data-> line + 1;
     if (checkLetters(*(data->line))== 0){
-        tagGet = NULL;
+        *tagGet='\0';
         return;
     }
     while(!isspace(*c) && (*c != ':')){
         if (checkLetterOrNumber(*c) == 0){
-            tagGet = NULL;
+            *tagGet='\0';
             return;
-
         }
         counter++;
         c++;
+    }
+    if(isspace(*c)){
+        *tagGet='\0';
+        return;
     }
     if (*c == ':'){
         counter++;
         strncpy(tag, data->line,counter);
         data->line += counter+2;
         tag[counter] = '\0';
+        strcpy(tagGet,tag);
     }
-    strcpy(tagGet,tag);
+
 }
 
 

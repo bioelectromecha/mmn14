@@ -19,13 +19,13 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="commandsManager.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="commonFuncs.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="directivesManager.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="firstPassCommandsManager.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="firstPassManager.c">
@@ -33,6 +33,9 @@
 		</Unit>
 		<Unit filename="header.h" />
 		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="secondPassCommandManager.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="secondPassManager.c">

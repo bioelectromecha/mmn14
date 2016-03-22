@@ -1,7 +1,5 @@
-#include "firstPassManager.h"
-#include "commonFuncs.h"
-#include "directivesManager.h"
-#include "commandsManager.h"
+#include "header.h"
+
 /*----------------------------------------------------------------------------*/
 /*
  * Description: implements the first pass algorithm (from the course booklet)
@@ -9,28 +7,19 @@
  * Output:		1 if successful, 0 otherwise
  */
 /*----------------------------------------------------------------------------*/
-int firstPassManager(FILE *file){
+int firstPassManager(Data *  data, FILE *file){
 
     char lineHolder[MAX_LINE_LEN+1];
-    Data data;
 
-    initializeData(&data);
 
     /* NULL means EOF. When we reach EOF it means we're done */
     while(fgets(lineHolder,MAX_LINE_LEN,file) != NULL ){
         printf("%s\n",lineHolder);
-        data.line=lineHolder;
-        data.lc++;
-        lineHandler(&data,file);
+        data->line=lineHolder;
+        data->lc++;
+        lineHandler(data,file);
     }
-    while(data.dc>0){
-        printf("%d\n", data.directiveArr[data.dc]);
-        data.dc--;
-    }
-    printf("SET IT FREE!!!!");
-
-    setDataFree(&data);
-    return 0;
+    return 1;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -54,7 +43,7 @@ int lineHandler(Data * data,FILE *file){
     }
     getTag(data,tag);
     /* there's a tag at the start of the line */
-    if (tag != NULL){
+    if (*tag != '\0'){
         /*printf("%s\n",tag);*/
         if (tagDupCheck (data, tag) == 1){
             printf("[Error] on line %d: you have the tag %s more then once.\n",data->lc, tag);
@@ -67,7 +56,7 @@ int lineHandler(Data * data,FILE *file){
         return  directivesManager(data, tag);
     }
     if(checkUpperCase(*(data->line))==0){
-        return commandsManager(data,tag);
+        return firstPassCommandsManager(data,tag);
     }
     printf("[Error] on line %d: line isn't valid a input\n",data->lc);
     data->containError=TRUE;
@@ -113,30 +102,6 @@ int tagDupCheck(Data * data, char * tag){
     return 0;
 }
 
-
-
-
-/*----------------------------------------------------------------------------*/
-/*
- * Description: initializes the variables in the Data struct
- * Input:       pointer to Data struct
- * Output:	    nothing
- */
-/*----------------------------------------------------------------------------*/
-void initializeData(Data * data){
-    data->tc = 0;
-    data->lc = 0;
-    data->dc = 0;
-    data->ic = 0;
-    data->exc = 0;
-    data->enc = 0;
-    data->containError=FALSE;
-    data->tagArr=NULL;
-    data->directiveArr=NULL;
-    data->entryArr=NULL;
-    data->externArr=NULL;
-}
-
 /*----------------------------------------------------------------------------*/
 /*
  * Description: adds a tag to the tag array inside the Data struct
@@ -151,16 +116,3 @@ void addTag(Data * data, char * tag, int dirAddress){
 	data->tc++;
 }
 
-/*----------------------------------------------------------------------------*/
-/*
- * Description: frees all the dynamically allocated memory in the Data struct
- * Input:       pointer to Data struct
- * Output:	    nothing
- */
-/*----------------------------------------------------------------------------*/
-void setDataFree(Data * data){
-    free(data->tagArr);
-    free(data->directiveArr);
-    free(data->externArr);
-    free(data->entryArr);
-}
