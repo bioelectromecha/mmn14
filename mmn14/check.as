@@ -4,7 +4,7 @@ LOOP:	jmp END
 
 
 	prn #-5
-LOOP:	sub r1,r4
+DERP:	sub r1,r4
 	inc K
 
 	mov **,r3

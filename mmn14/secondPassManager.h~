@@ -1,0 +1,11 @@
+/*standard library imports */
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+
+
+void secondPassManager(FILE * file, Data * data);
+
+int lineHandlerSecondPass(Data * data,FILE * file);

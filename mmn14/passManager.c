@@ -1,5 +1,11 @@
-#include "header.h"
+/*
+ ====================================================================================
+ Module:        passManager
+ Description: 	manages data allocation and first and second passes
+ ====================================================================================
+ */
 
+#include "header.h"
 /*----------------------------------------------------------------------------*/
 /*
  * Description: manages the first and second pass, and file creation
@@ -7,7 +13,7 @@
  * Output:	    1 if successful, 0 otherwise
  */
 /*----------------------------------------------------------------------------*/
-int passManager(FILE *file){
+int passManager(FILE *file, char * filename){
 
     /* create and initialize the data structures */
     Data data;
@@ -29,6 +35,10 @@ int passManager(FILE *file){
 
     /* reset instruction counter to 0 */
     data.ic = 0;
+
+    /* reset instruction counter to 0 */
+    data.wc=0;
+
     /* go over the code for a second time*/
     secondPassManager(&data,file);
 
@@ -38,7 +48,7 @@ int passManager(FILE *file){
     }
 
     /* create the output files and write the machine code into them */
-    outputManager(&data);
+    outputManager(&data, filename);
 
     /* free the data that was allocated during the run */
     setDataFree(&data);
@@ -62,12 +72,14 @@ void initializeData(Data * data){
     data->ic = 0;
     data->exc = 0;
     data->enc = 0;
+    data->wc =0;
     data->containError=FALSE;
     data->tagArr=NULL;
     data->directiveArr=NULL;
     data->entryArr=NULL;
     data->externArr=NULL;
     data->instArr=NULL;
+    data->wordArr=NULL;
 }
 
 
@@ -85,7 +97,9 @@ void setDataFree(Data * data){
     free(data->externArr);
     free(data->entryArr);
     free(data->instArr);
+    free(data->wordArr);
 }
+
 
 /*----------------------------------------------------------------------------*/
 /*
@@ -96,6 +110,16 @@ void setDataFree(Data * data){
 /*----------------------------------------------------------------------------*/
 void allocateInstructionMemory(Data * data){
     data->instArr = malloc(sizeof(Instruction)*(data->ic));
+}
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: allocates memory for the extra words array
+ * Input:       pointer to Data struct
+ * Output:	    nothing
+ */
+/*----------------------------------------------------------------------------*/
+void allocateExtraWordMemory(Data * data){
+     data->wordArr = malloc(sizeof(Instruction)*(data->wc));
 }
 
 

@@ -2,36 +2,71 @@
 1458659252 source:/home/stav/Desktop/mmn14-master/mmn14/commandsManager.c
 	"header.h"
 
-1458673038 /home/stav/Desktop/mmn14-master/mmn14/header.h
+1458755344 /home/stav/Desktop/mmn14-master/mmn14/header.h
 	<string.h>
 	<stdio.h>
 	<stdlib.h>
 	<ctype.h>
+	<math.h>
 
-1458658275 source:/home/stav/Desktop/mmn14-master/mmn14/commonFuncs.c
+1458733987 source:/home/stav/Desktop/mmn14-master/mmn14/commonFuncs.c
 	"header.h"
 
-1458645833 source:/home/stav/Desktop/mmn14-master/mmn14/directivesManager.c
+1458734037 source:/home/stav/Desktop/mmn14-master/mmn14/directivesManager.c
 	"header.h"
 
-1458673041 source:/home/stav/Desktop/mmn14-master/mmn14/firstPassManager.c
+1458734101 source:/home/stav/Desktop/mmn14-master/mmn14/firstPassManager.c
 	"header.h"
 
-1458659988 source:/home/stav/Desktop/mmn14-master/mmn14/main.c
+1458755852 source:/home/stav/Desktop/mmn14-master/mmn14/main.c
 	"header.h"
 
-1458664481 source:/home/stav/Desktop/mmn14-master/mmn14/passManager.c
+1458754349 source:/home/stav/Desktop/mmn14-master/mmn14/passManager.c
 	"header.h"
 
 1458665312 source:/home/stav/Desktop/mmn14-master/mmn14/secondPassManager.c
 	"header.h"
 
-1458665448 source:/home/stav/Desktop/mmn14-master/mmn14/secondPassCommandManager.c
+1458755224 source:/home/stav/Desktop/mmn14-master/mmn14/secondPassCommandManager.c
 	"header.h"
 
-1458664018 source:/home/stav/Desktop/mmn14-master/mmn14/outputManager.c
+1458755102 source:/home/stav/Desktop/mmn14-master/mmn14/outputManager.c
 	"header.h"
 
-1458673001 source:/home/stav/Desktop/mmn14-master/mmn14/firstPassCommandsManager.c
+1458754727 source:/home/stav/Desktop/mmn14-master/mmn14/firstPassCommandsManager.c
+	"header.h"
+
+1458733986 source:/home/alexandra/mmn14/mmn14/commonFuncs.c
+	"header.h"
+
+1458768331 /home/alexandra/mmn14/mmn14/header.h
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+	<math.h>
+
+1458734036 source:/home/alexandra/mmn14/mmn14/directivesManager.c
+	"header.h"
+
+1458734100 source:/home/alexandra/mmn14/mmn14/firstPassManager.c
+	"header.h"
+
+1458665312 source:/home/alexandra/mmn14/mmn14/secondPassManager.c
+	"header.h"
+
+1458758440 source:/home/alexandra/mmn14/mmn14/main.c
+	"header.h"
+
+1458754726 source:/home/alexandra/mmn14/mmn14/firstPassCommandsManager.c
+	"header.h"
+
+1458762505 source:/home/alexandra/mmn14/mmn14/passManager.c
+	"header.h"
+
+1458769944 source:/home/alexandra/mmn14/mmn14/outputManager.c
+	"header.h"
+
+1458762150 source:/home/alexandra/mmn14/mmn14/secondPassCommandManager.c
 	"header.h"
 

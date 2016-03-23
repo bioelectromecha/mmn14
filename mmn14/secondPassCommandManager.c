@@ -1,7 +1,7 @@
 /*
  ====================================================================================
  Module:        secondPassCommandManager
- Description: 	holds all the functions that implement the managment of instruction/command in the second pass
+ Description: 	functions that implement the second pass instruction algorithm
  ====================================================================================
  */
 
@@ -48,7 +48,7 @@ int secondPassCommandManager(Data * data){
  */
 /*----------------------------------------------------------------------------*/
 int zeroOperandsCommandHandler(Data * data, char * cmd){
-    addZeroOperandCommand(data,cmd);*/
+    addZeroOperandCommand(data,cmd);
     return 1;
 }
 
@@ -74,8 +74,8 @@ int oneOperandsCommandHandler(Data * data, char * cmd){
             printf("[Error] on line %d: tag does not exist\n",data->lc);
             return 0;
         }
-      /*   addTagCommand(data, cmd, operand); */
     }
+    addOneOperandCommand(data,cmd,operand,addressingMethod);
     return 1;
 }
 
@@ -83,8 +83,7 @@ int oneOperandsCommandHandler(Data * data, char * cmd){
 /*----------------------------------------------------------------------------*/
 /*
  * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .asm extension
- * Output:		machine code files (.o suffix), entry files, extern files
+ * Input:       Assembly file names as command line arguments, without the .as
  */
 /*----------------------------------------------------------------------------*/
 int twoOperandsCommandHandler(Data * data, char * cmd){
@@ -110,14 +109,16 @@ int twoOperandsCommandHandler(Data * data, char * cmd){
             return 0;
         }
     }
-     if(addressingMethod2 == TAG_OPERAND){
-        if(checkIfTagExists(data,operand2)==0){
+
+    if(addressingMethod2 == TAG_OPERAND){
+         if(checkIfTagExists(data,operand2)==0){
             printf("[Error] on line %d: tag does not exist\n",data->lc);
             return 0;
         }
     }
-     /* addCommand(???); */
-     return 1;
+
+    addTwoOperandCommand(data,cmd,operand1,operand2,addressingMethod1, addressingMethod2);
+    return 1;
 }
 
 
@@ -130,12 +131,12 @@ int twoOperandsCommandHandler(Data * data, char * cmd){
 /*----------------------------------------------------------------------------*/
 int addZeroOperandCommand(Data * data, char * cmd){
     int cmdIndex = getCommandIndex(cmd);
-    data->instArr[data->ic].e_r_a = 0;
+    data->instArr[data->ic].e_r_a = ABSOLUTE;
     data->instArr[data->ic].destination_addressing =0;
     data->instArr[data->ic].source_addressing = 0;
     data->instArr[data->ic].opcode = cmdIndex;
-    data->instArr[data->ic].group= 0;
-    data->instArr[data->ic].rnd = 0;
+    data->instArr[data->ic].group= NO_OPERANDS;
+    data->instArr[data->ic].rnd = NOT_RANDOM;
     data->instArr[data->ic].unused=0;
     data->ic++;
     return 1;
@@ -150,26 +151,112 @@ int addZeroOperandCommand(Data * data, char * cmd){
  */
 /*----------------------------------------------------------------------------*/
 int addOneOperandCommand(Data * data, char * cmd, char * operand, int addressingMethod){
-    int cmdIndex;
-    int tagAddress;
+    int cmdIndex = getCommandIndex(cmd);
 
-    /* we distinguish between random addressing methods with 1, 2, and 3 astrii, but not in the encoding */
-    if(addressingMethod == 21 || addressingMethod == 22 || addressingMethod == 23){
-        addressingMethod=2;
-    }
-
-    cmdIndex=getCommandIndex(cmd);
-
-    if(addressingMethod == TAG_OPERAND){
-        tagAddress=getTagAddress(data, operand);
-    }
-    data->instArr[data->ic].e_r_a = 0;
-    data->instArr[data->ic].destination_addressing addressingMethod
+    data->instArr[data->ic].e_r_a = ABSOLUTE;
+    data->instArr[data->ic].destination_addressing =addressingMethod;
     data->instArr[data->ic].source_addressing = 0;
     data->instArr[data->ic].opcode = cmdIndex;
-    data->instArr[data->ic].group= 1;
-    data->instArr[data->ic].rnd = 0;
+    data->instArr[data->ic].group=  ONE_OPERAND;
+    data->instArr[data->ic].rnd = NOT_RANDOM;
     data->instArr[data->ic].unused=0;
+    data->ic++;
+
+    if(addressingMethod == TAG_OPERAND){
+
+        data->wordArr[data->wc].e_r_a = RELOCATABLE;
+        data->wordArr[data->wc].word = getTagAddress(data, operand);
+        data->wc++;
+        return 1;
+    }
+    if(addressingMethod == IMMEDIATE_OPERAND){
+        data->wordArr[data->wc].e_r_a = ABSOLUTE;
+        data->wordArr[data->wc].word =getImmediateOperand(data,operand);
+        data->wc++;
+        return 1;
+    }
+    if(addressingMethod == REGISTER_OPERAND){
+        data->wordArr[data->wc].e_r_a = ABSOLUTE;
+        data->wordArr[data->wc].word =getRegisterOperand(data,operand);
+        data->wc++;
+        return 1;
+    }
+    if(addressingMethod == ONE_STAR_RANDOM_OPERAND || addressingMethod == TWO_STAR_RANDOM_OPERAND || addressingMethod==THREE_STAR_RANDOM_OPERAND){
+        data->wordArr[data->wc].e_r_a = ABSOLUTE;
+        data->wordArr[data->wc].word =getRandomOperand(data,operand);
+        data->wc++;
+        return 1;
+    }
+
+    return 1;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: implements the first pass algorithm (from the course booklet)
+ * Input:       Assembly file names as command line arguments, without the .asm extension
+ * Output:		machine code files (.o suffix), entry files, extern files
+ */
+/*----------------------------------------------------------------------------*/
+int addTwoOperandCommand(Data * data, char * cmd, char * operand1, char * operand2, int addressingMethod1, int addressingMethod2){
+    int cmdIndex = getCommandIndex(cmd);
+
+    data->instArr[data->ic].e_r_a = ABSOLUTE;
+    data->instArr[data->ic].destination_addressing =addressingMethod1;
+    data->instArr[data->ic].source_addressing = addressingMethod2;
+    data->instArr[data->ic].opcode = cmdIndex;
+    data->instArr[data->ic].group=  TWO_OPERANDS;
+    data->instArr[data->ic].rnd = NOT_RANDOM;
+    data->instArr[data->ic].unused=0;
+    data->ic++;
+
+    /*add first operand */
+    if(addressingMethod1 == TAG_OPERAND){
+        if(checkIfTagExists(data,operand1)==0){
+            printf("[Error] on line %d: tag does not exist\n",data->lc);
+            return 0;
+        }
+        data->wordArr[data->wc].e_r_a = RELOCATABLE;
+        data->wordArr[data->wc].word = getTagAddress(data, operand1);
+        data->wc++;
+        return 1;
+    }
+    if(addressingMethod1 == IMMEDIATE_OPERAND){
+        data->wordArr[data->wc].e_r_a = ABSOLUTE;
+        data->wordArr[data->wc].word =getImmediateOperand(data,operand1);
+    }else if(addressingMethod1 == REGISTER_OPERAND){
+        data->wordArr[data->wc].e_r_a = ABSOLUTE;
+        data->wordArr[data->wc].word =getRegisterOperand(data,operand1);
+    }else if(addressingMethod1 == ONE_STAR_RANDOM_OPERAND || addressingMethod1 == TWO_STAR_RANDOM_OPERAND || addressingMethod1==THREE_STAR_RANDOM_OPERAND){
+        data->wordArr[data->wc].e_r_a = ABSOLUTE;
+        data->wordArr[data->wc].word =getRandomOperand(data,operand1);
+    }
+    data->wc++;
+
+    /*add second operand */
+    if(addressingMethod2 == TAG_OPERAND){
+        if(checkIfTagExists(data,operand2)==0){
+            printf("[Error] on line %d: tag does not exist\n",data->lc);
+            return 0;
+        }
+        data->wordArr[data->wc].e_r_a = RELOCATABLE;
+        data->wordArr[data->wc].word = getTagAddress(data, operand2);
+        data->wc++;
+        return 1;
+    }
+     if(addressingMethod2 == IMMEDIATE_OPERAND){
+        data->wordArr[data->wc].e_r_a = ABSOLUTE;
+        data->wordArr[data->wc].word =getImmediateOperand(data,operand2);
+    }else if(addressingMethod2 == REGISTER_OPERAND){
+        data->wordArr[data->wc].e_r_a = ABSOLUTE;
+        data->wordArr[data->wc].word =getRegisterOperand(data,operand2);
+    }else if(addressingMethod2 == ONE_STAR_RANDOM_OPERAND || addressingMethod2 == TWO_STAR_RANDOM_OPERAND || addressingMethod2 == THREE_STAR_RANDOM_OPERAND){
+        data->wordArr[data->wc].e_r_a = ABSOLUTE;
+        data->wordArr[data->wc].word =getRandomOperand(data,operand2);
+    }
+    data->wc++;
+
     return 1;
 }
 
@@ -413,4 +500,50 @@ int checkDestinationOperandAddressing(int method, char * cmd){
         return 0;
     }
     return 0;
+}
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: get the number from an immediate operand
+ * Input:       Data struct, operand string
+ * Output:		integer
+ */
+/*----------------------------------------------------------------------------*/
+int getImmediateOperand(Data* data, char * operand){
+    int num;
+    char tempOperand[30];
+    char * c;
+    strcpy(tempOperand,operand);
+    strcat(tempOperand,"\n");
+    c=tempOperand;
+    c++;
+    sscanf(c, "%d", &num);
+    return num;
+}
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: get the register address
+ * Input:       string operand
+ * Output:		int register
+ */
+/*----------------------------------------------------------------------------*/
+int getRegisterOperand(Data * data,char * operand){
+    char* regArr[]={"r0","r1","r2","r3","r4","r5","r6","r7"};
+    int i;
+    for(i=0;i<8;i++){
+        if(strcmp(operand,regArr[i])==0){
+            return i;
+        }
+    }
+    return 0;
+}
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: get a random number
+ * Input:       string operand
+ * Output:		integer
+ */
+/*----------------------------------------------------------------------------*/
+int getRandomOperand(Data* data,char * operand){
+    return rand() % 20;
 }

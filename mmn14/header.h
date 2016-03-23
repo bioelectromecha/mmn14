@@ -1,12 +1,24 @@
-/*-------------------------------------------*/
+/*
+ ====================================================================================
+ Module:        header
+ Description: 	declarations for the whole program
+ ====================================================================================
+ */
+
+
+/*----------------------------------------------------------------------------*/
 /*standard library imports */
+/*----------------------------------------------------------------------------*/
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 
-/*-------------------------------------------*/
+
+/*----------------------------------------------------------------------------*/
 /*constant definitions */
+/*----------------------------------------------------------------------------*/
 
 /* Danny said it's okay to assume there's a max length for a name variable, so this is it */
 #define MAX_NAME_LEN 80
@@ -49,6 +61,8 @@
 #define RTS 14
 #define STOP 15
 
+/* addressing methods */
+
 #define IMMEDIATE_OPERAND 0
 #define REGISTER_OPERAND 3
 #define  ONE_STAR_RANDOM_OPERAND 20
@@ -59,8 +73,36 @@
 
 #define BASE32 32
 
-/*--------------------------------------------*/
+/* definitions for secondPassCommandManager */
+
+#define ABSOLUTE 0
+#define RELOCATABLE 2
+#define EXTERNAL 1
+
+#define NO_OPERANDS 0
+#define ONE_OPERAND 1
+#define TWO_OPERANDS 2
+
+#define NOT_RANDOM 0
+#define RANDOM_ONE 1
+#define RANDOM_TWO 2
+#define RANDOM_THREE 3
+
+#define R0 0
+#define R1 1
+#define R2 2
+#define R3 3
+#define R4 4
+#define R5 5
+#define R6 6
+#define R7 7
+
+
+
+
+/*----------------------------------------------------------------------------*/
 /*data structures */
+/*----------------------------------------------------------------------------*/
 
 typedef struct{
    unsigned int e_r_a : 2;
@@ -71,6 +113,12 @@ typedef struct{
    unsigned int rnd : 2;
    unsigned int unused : 1;
 } Instruction;
+
+typedef struct{
+   unsigned int e_r_a : 2;
+   unsigned int word : 13;
+} ExtraWord;
+
 
 typedef struct{
     char name[MAX_TAG_LEN];
@@ -100,23 +148,29 @@ typedef struct{
     int exc;
     /* entry counter */
     int enc;
+    /* extra words counter */
+    int wc;
 
     Tag * tagArr;
     int * directiveArr;
     Extern * externArr;
     Entry * entryArr;
     Instruction * instArr;
+    ExtraWord * wordArr;
 
 
      /* if there's an error, no need for a second pass */
     int containError;
 } Data;
 
-/*--------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------*/
+/* function declarations */
+/*----------------------------------------------------------------------------*/
 
 
 /*  passManager function declarations*/
-int passManager(FILE *file);
+int passManager(FILE *file ,char * );
 void setDataFree(Data * data);
 void initializeData(Data * data);
 void allocateInstructionMemory(Data * data);
@@ -172,7 +226,6 @@ int isEndOfLine(char* pStr);
 
 
 /* directivesManager function declarations */
-
 int directivesManager(Data * data, char * tag);
 int entryDirectiveHandler(Data * data, char * tag);
 int stringDirectiveHandler(Data * data, char * tag);
@@ -190,17 +243,29 @@ int oneOperandsCommandHandler(Data * data, char * cmd);
 int twoOperandsCommandHandler(Data * data, char * cmd);
 int addZeroOperandCommand(Data * data, char * cmd);
 int addOneOperandCommand(Data * data, char * cmd, char * operand, int addressingMethod);
+int addTwoOperandCommand(Data * data, char * cmd, char * operand1, char * operand2, int addressingMethod1, int addressingMethod2);
 int getTagAddress(Data * data, char * tag);
 int checkIfTagExists(Data * data, char * operand);
 int getSourceOperand(Data * data, char * operand);
 int getDestinationOperand(Data * data, char * operand);
 int checkSourceOperandAddressing(int method, char * cmd);
 int checkDestinationOperandAddressing(int method, char * cmd);
+int getImmediateOperand(Data* data, char * operand);
+int getRegisterOperand(Data * data,char * operand);
+int getRandomOperand(Data* data,char * operand);
+
 
 /* output manager */
-void outputManager(Data * data);
-void writeToOutputFile(Data * data, FILE* file) ;
-char* convertBase10toOtherBase(int decNum, int otherBase);
+void outputManager(Data * data, char *);
+void createOutputZeroExtra(Data * data, char * filename);
+void createOutputOneExtra(Data * data,char * );
+void createOutputTwoExtra(Data * data,char * );
+void writeToOutputFile(char * output,char *);
+char* decimalToBase32(unsigned long int decNum);
+int binaryToDecimal(int n);
+int decimalToBinary(int n);
+void writeLengthsToFile(Data * data, char * filename);
+
 
 
 

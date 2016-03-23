@@ -1,4 +1,4 @@
-include "header.h"
+#include "header.h"
 /*----------------------------------------------------------------------------*/
 /*
  * Description: parses and validates the commands from input
@@ -129,7 +129,10 @@ int checkOneOperands(Data * data, char * tag){
     if(tag != NULL){
         addTag(data,tag,data->ic);
     }
-    data->ic+=2;
+    /* there is one more instruction to allocate memory for at end of first pass */
+    data->ic++;
+    /* there is one more extra word to allocate memory for at end of first pass */
+    data->wc++;
     return 1;
 }
 /*----------------------------------------------------------------------------*/
@@ -194,10 +197,13 @@ int checkTwoOperands(Data * data, char * tag,char* command){
     if(tag != NULL){
         addTag(data,tag,data->ic);
     }
-    data->ic+=3;
+    /* there is one more instruction to allocate memory for at end of first pass */
+    data->ic++;
+    /* there are two more extra memory words to allocate memory for at end of first pass */
+    data->wc+=2;
+
     return 1;
 }
-
 
 /*----------------------------------------------------------------------------*/
 /*
@@ -304,6 +310,13 @@ int isRegisterOperand(char * operand){
     }
     return 0;
 }
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: check if the addressing method is register addressing or not
+ * Input:       string operand
+ * Output:		1 if register, 0 if not register
+ */
+/*----------------------------------------------------------------------------*/
 int isTagOperand( char * operand){
     char tempOperand[30];
     char * c;
