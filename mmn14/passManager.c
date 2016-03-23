@@ -6,6 +6,7 @@
  */
 
 #include "header.h"
+
 /*----------------------------------------------------------------------------*/
 /*
  * Description: manages the first and second pass, and file creation
@@ -31,7 +32,9 @@ int passManager(FILE *file, char * filename){
     fseek (file, 0, SEEK_SET);
 
     /* allocate memory for all the instructions */
+    allocateExtraWordMemory(&data);
     allocateInstructionMemory(&data);
+
 
     /* reset instruction counter to 0 */
     data.ic = 0;
@@ -119,7 +122,7 @@ void allocateInstructionMemory(Data * data){
  */
 /*----------------------------------------------------------------------------*/
 void allocateExtraWordMemory(Data * data){
-     data->wordArr = malloc(sizeof(Instruction)*(data->wc));
+     data->wordArr = malloc(sizeof(ExtraWord)*(data->wc));
 }
 
 

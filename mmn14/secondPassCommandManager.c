@@ -91,15 +91,19 @@ int twoOperandsCommandHandler(Data * data, char * cmd){
     int addressingMethod2;
     char operand1[30];
     char operand2[30];
+
+    eatSpace(data);
     getSourceOperand(data, operand1);
+    (data->line)++;
+
     getDestinationOperand(data, operand2);
     addressingMethod1 = getAddressingMethod(data,operand1);
     addressingMethod2 = getAddressingMethod(data,operand2);
-    if(checkSourceOperandAddressing(addressingMethod1,cmd)){
+    if(checkSourceOperandAddressing(addressingMethod1,cmd) == 0){
         printf("[Error] on line %d: illegal addressing for this command\n",data->lc);
         return 0;
     }
-    if(checkDestinationOperandAddressing(addressingMethod2,cmd)){
+    if(checkDestinationOperandAddressing(addressingMethod2,cmd) == 0){
         printf("[Error] on line %d: illegal addressing for this command\n",data->lc);
         return 0;
     }
@@ -545,5 +549,20 @@ int getRegisterOperand(Data * data,char * operand){
  */
 /*----------------------------------------------------------------------------*/
 int getRandomOperand(Data* data,char * operand){
-    return rand() % 20;
+int a = (rand()%8) - 1;
+    int numberRand = isRandomOperand(operand);
+    if (numberRand == ONE_STAR_RANDOM_OPERAND){
+        data->instArr[data->ic].rnd = 1;
+
+        return (rand()%8) - 1;
+    }else if (numberRand == TWO_STAR_RANDOM_OPERAND){
+        data->instArr[data->ic].rnd = 2;
+        return (rand()%8000) +7;
+    }else if (numberRand == THREE_STAR_RANDOM_OPERAND){
+        data->instArr[data->ic].rnd = 3;
+        int num = data->dc;
+        int rand2 = rand() % num;
+        return data-> tagArr[rand2+1].address;
+    }
+    return 0;
 }
