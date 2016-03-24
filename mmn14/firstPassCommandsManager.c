@@ -1,3 +1,12 @@
+/*
+ ====================================================================================
+ Module:        firstPassCommandsManager
+ Description: 	module validates all the commands during the first pass and adds tags
+ ====================================================================================
+ */
+
+
+
 #include "header.h"
 /*----------------------------------------------------------------------------*/
 /*
@@ -86,8 +95,8 @@ int getNumOfOperands(int cmdIndex){
 /*----------------------------------------------------------------------------*/
 int checkZeroOperands(Data * data, char * tag){
     if(*(data->line)=='\n' || *(data->line)==EOF){
-        if(tag != NULL){
-            addTag(data,tag,data->ic);
+        if(tag != NULL && *tag !='\0'){
+            addTag(data,tag,data->dc);
         }
         data->ic++;
         return 1;
@@ -126,8 +135,8 @@ int checkOneOperands(Data * data, char * tag){
         return 0;
     }
     /* what happens when IC and DC are the same? how does it diffrentiate address? is DC limited to 100? */
-    if(tag != NULL){
-        addTag(data,tag,data->ic);
+    if(tag != NULL && *tag !='\0'){
+        addTag(data,tag,data->dc);
     }
     /* there is one more instruction to allocate memory for at end of first pass */
     data->ic++;
@@ -168,7 +177,7 @@ int checkTwoOperands(Data * data, char * tag,char* command){
         data->containError=TRUE;
         return 0;
     }
-    data->line+= strlen(operand2);
+    data->line+= strlen(operand2)+1;
 
     /* add a terminating character to the operand string */
     eatSpace(data);
@@ -194,8 +203,8 @@ int checkTwoOperands(Data * data, char * tag,char* command){
 
     }
     /* add the address under the tag if it was given */
-    if(tag != NULL){
-        addTag(data,tag,data->ic);
+    if(tag != NULL && *tag !='\0'){
+        addTag(data,tag,data->dc);
     }
     /* there is one more instruction to allocate memory for at end of first pass */
     data->ic++;
@@ -328,7 +337,7 @@ int isTagOperand( char * operand){
     if (checkLetters(*c)== 0){
         return 0;
     }
-    operand++;
+    c++;
     while(!isspace(*c) && *c != '\n' && *c !=EOF){
         if (checkLetterOrNumber(*c) == 0){
             return 0;

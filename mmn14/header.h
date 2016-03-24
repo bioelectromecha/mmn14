@@ -174,6 +174,7 @@ int passManager(FILE *file ,char * );
 void setDataFree(Data * data);
 void initializeData(Data * data);
 void allocateInstructionMemory(Data * data);
+void allocateExtraWordMemory(Data * data);
 
 
 /* firstPassManager function declarations*/
@@ -223,6 +224,7 @@ int checkUpperCase(char c);
 int checkInLimit(char c,int startLimit,int length);
 char* getCharPtrBeyondSpace(char* pString);
 int isEndOfLine(char* pStr);
+void getTagOperand(Data * data, char * tagGet);
 
 
 /* directivesManager function declarations */
@@ -253,18 +255,21 @@ int checkDestinationOperandAddressing(int method, char * cmd);
 int getImmediateOperand(Data* data, char * operand);
 int getRegisterOperand(Data * data,char * operand);
 int getRandomOperand(Data* data,char * operand);
+int randomGenerator(int a,int b);
 
 
 /* output manager */
 void outputManager(Data * data, char *);
-void createOutputZeroExtra(Data * data, char * filename);
-void createOutputOneExtra(Data * data,char * );
-void createOutputTwoExtra(Data * data,char * );
+void createOutputZeroExtra(Data * , char * , int);
+void createOutputOneExtra(Data * ,char * , int, int);
+void createOutputTwoExtra(Data * data,char *, int, int ,int);
 void writeToOutputFile(char * output,char *);
 char* decimalToBase32(unsigned long int decNum);
-int binaryToDecimal(int n);
-int decimalToBinary(int n);
+unsigned long int binaryToDecimal(unsigned long int n);
+unsigned long int decimalToBinary(unsigned long int n);
 void writeLengthsToFile(Data * data, char * filename);
+void writeEntryToFile(Data * data,char * filename);
+void writeExternToFile(Data * data,char * filename);
 
 
 

@@ -1,10 +1,10 @@
 #include "header.h"
 
 /*
- ====================================================================================
+ ==========Random==========================================================================
  Date       :   20/3/2016
 
- Authors    :   Roman Smirnov, Stav Rockah
+ Authors    :   Roman Smirnov 312914443, Stav Rockah 307900878
 
  Description: 	A C program which compiles assembly code into machine code
 
@@ -35,11 +35,6 @@ int main(int argc, char* argv[]){
 	/* pointer to current file */
     FILE *fp;
 
-    /* debug code
-    ---------------------*/
-    *(argv+1) = "check";
-    argc = 2;
-    /*-------------------*/
 
 	/* check if the program was ran with 0 arguments */
     if(argc==1)

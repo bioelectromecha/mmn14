@@ -7,6 +7,13 @@
 
 #include "header.h"
 
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: in charge of directing the handling the different directives
+ * Input:       Data struct, string tag
+ * Output:		1 if letter or number, 0 otherwise
+ */
 /*----------------------------------------------------------------------------*/
 int directivesManager(Data * data, char * tag){
     char s[6];
@@ -33,6 +40,12 @@ int directivesManager(Data * data, char * tag){
     return 0;
 }
 
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: handles the data directive parsing and add to array
+ * Input:       Data struct, string tag
+ * Output:		1 if letter or number, 0 otherwise
+ */
 /*----------------------------------------------------------------------------*/
 int dataDirectiveHandler(Data * data, char * tag){
     int i=0;
@@ -80,7 +93,7 @@ int dataDirectiveHandler(Data * data, char * tag){
             }
         }
     }
-    if(tag != NULL){
+    if( tag != NULL && *tag != '\0'){
         addTag(data,tag, data->dc);
     }
     for(i=0;i<dcounter;i++){
@@ -88,6 +101,14 @@ int dataDirectiveHandler(Data * data, char * tag){
     }
     return 1;
 }
+
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: handles the string directive parsing and add to array
+ * Input:       Data struct, string tag
+ * Output:		1 if letter or number, 0 otherwise
+ */
 /*----------------------------------------------------------------------------*/
 int stringDirectiveHandler(Data * data, char * tag){
     int i=0;
@@ -129,7 +150,7 @@ int stringDirectiveHandler(Data * data, char * tag){
         return 0;
     }
 
-    if(tag != NULL){
+    if( tag != NULL && *tag != '\0'){
         addTag(data,tag, data->dc);
     }
     for(i=0;i<counter;i++){
@@ -138,11 +159,19 @@ int stringDirectiveHandler(Data * data, char * tag){
     addDirective(data,0);
     return 1;
 }
+
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: handles the external directive parsing and add to array
+ * Input:       Data struct, string tag
+ * Output:		1 if letter or number, 0 otherwise
+ */
 /*----------------------------------------------------------------------------*/
 int externDirectiveHandler(Data * data, char * tag){
-    char* tagName ="";
+    char tagName[MAX_TAG_LEN];
     int i=0;
-    if(tag != NULL){
+    if(*tag != '\0'){
         printf("[Error] on line %d: a .extern directive can't start with a tag\n",data->lc);
         data->containError=TRUE;
         return 0;
@@ -152,34 +181,50 @@ int externDirectiveHandler(Data * data, char * tag){
         data->containError=TRUE;
         return 0;
     }
-    getTag(data,tagName);
+    getTagOperand(data,tagName);
     if(tagName==NULL){
         printf("[Error] on line %d: malformed .extern directive\n",data->lc);
         data->containError=TRUE;
         return 0;
     }
-    for(i=0;i<=(data->enc);i++){
-        if(strcmp(data->entryArr[data->enc].name,tagName)==0){
-            printf("[Error] on line %d: .extern directive name already defined as .entry\n",data->lc);
-            data->containError=TRUE;
-            return 0;
+    /* search if tag already exists in entry array */
+    for(i=0;i<(data->enc);i++){
+     if (data->entryArr != NULL){
+            if (strcmp(tagName,"\0") != 0){
+                if(strcmp(data->entryArr[data->enc].name,tagName)==0){
+                    printf("[Error] on line %d: .extern directive name already defined as .entry\n",data->lc);
+                    data->containError=TRUE;
+                    return 0;
+                }
+            }
         }
     }
-     for(i=0;i<=(data->enc);i++){
-        if(strcmp(data->externArr[data->enc].name,tagName)==0){
-            printf("[Error] on line %d: .extern directive name already exists\n",data->lc);
-            data->containError=TRUE;
-            return 0;
+    /* search if tag already exists in extern array */
+    for(i=0;i<(data->exc);i++){
+        if (data->externArr != NULL){
+            if(strcmp(data->externArr[data->exc].name,tagName)==0){
+                printf("[Error] on line %d: .extern directive name already exists\n",data->lc);
+                data->containError=TRUE;
+                return 0;
+            }
         }
     }
     addExtern(data,tagName);
     return 1;
 }
+
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: handles the entry directive parsing and add to array
+ * Input:       Data struct, string tag
+ * Output:		1 if letter or number, 0 otherwise
+ */
 /*----------------------------------------------------------------------------*/
 int entryDirectiveHandler(Data * data, char * tag){
     char tagName[MAX_TAG_LEN];
     int i=0;
-    if(tag != NULL){
+    if(*tag != '\0'){
         printf("[Error] on line %d: a .entry directive can't start with a tag\n",data->lc);
         data->containError=TRUE;
         return 0;
@@ -189,36 +234,58 @@ int entryDirectiveHandler(Data * data, char * tag){
         data->containError=TRUE;
         return 0;
     }
-    getTag(data,tagName);
+    getTagOperand(data,tagName);
     if(tagName==NULL){
         printf("[Error] on line %d: malformed .entry directive\n",data->lc);
         data->containError=TRUE;
         return 0;
     }
     for(i=0;i<=(data->enc);i++){
-        if(strcmp(data->entryArr[data->enc].name,tagName)==0){
-            printf("[Error] on line %d: .entry directive name already exists\n",data->lc);
-            data->containError=TRUE;
-            return 0;
+        if (data->entryArr != NULL){
+            if (strcmp(tagName,"\0") != 0){
+                if(strcmp(data->entryArr[data->enc].name,tagName)==0){
+                    printf("[Error] on line %d: .entry directive name already exists\n",data->lc);
+                    data->containError=TRUE;
+                    return 0;
+                }
+            }
         }
     }
      for(i=0;i<=(data->enc);i++){
-        if(strcmp(data->externArr[data->enc].name,tagName)==0){
-            printf("[Error] on line %d: .entry directive name already defined as .extern\n",data->lc);
-            data->containError=TRUE;
-            return 0;
+        if (data->externArr != NULL){
+            if(strcmp(data->externArr[data->enc].name,tagName)==0){
+                printf("[Error] on line %d: .entry directive name already defined as .extern\n",data->lc);
+                data->containError=TRUE;
+                return 0;
+            }
         }
     }
     addEntry(data,tagName);
     return 1;
 }
 
+
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: adds a directive to array
+ * Input:       Data struct, directive address
+ * Output:		nothing
+ */
 /*----------------------------------------------------------------------------*/
 void addDirective(Data * data, int directive){
 	data->directiveArr = realloc(data->directiveArr, sizeof(int)*(data->dc+1));
 	data->directiveArr[data->dc]=directive;
 	data->dc++;
 }
+
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: adds an external tag to array
+ * Input:       Data struct, string extrn tag name
+ * Output:		nothing
+ */
 /*----------------------------------------------------------------------------*/
 void addExtern(Data * data, char * tag){
 	data->externArr = realloc(data->externArr, sizeof(Extern)*(data->exc+1));
@@ -226,6 +293,13 @@ void addExtern(Data * data, char * tag){
 
 	data->exc++;
 }
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: adds a directive to array
+ * Input:       Data struct, directive address
+ * Output:		nothing
+ */
 /*----------------------------------------------------------------------------*/
 void addEntry(Data * data, char * tag){
 	data->entryArr = realloc(data->entryArr, sizeof(Entry)*(data->enc+1));

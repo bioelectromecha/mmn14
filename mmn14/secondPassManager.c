@@ -24,6 +24,7 @@ void secondPassManager( Data * data, FILE *file){
         data->line=lineHolder;
         if(lineHandlerSecondPass(data,file)==0){
             printf("[Error] on line %d: Fatal Error, continuing to next file if exists\n",data->lc);
+            data->containError=TRUE;
         }
         data->lc++;
     }
@@ -31,9 +32,9 @@ void secondPassManager( Data * data, FILE *file){
 
 /*----------------------------------------------------------------------------*/
 /*
- * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .asm extension
- * Output:		machine code files (.o suffix), entry files, extern files
+ * Description: handles the line input during the second pass
+ * Input:       Data struct, file pointer
+ * Output:		1 if sucessful, 0 otherwise
  */
 /*----------------------------------------------------------------------------*/
 int lineHandlerSecondPass(Data * data, FILE * file){

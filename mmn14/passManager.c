@@ -39,6 +39,9 @@ int passManager(FILE *file, char * filename){
     /* reset instruction counter to 0 */
     data.ic = 0;
 
+    /* reset line counter to 0 */
+    data.lc = 1;
+
     /* reset instruction counter to 0 */
     data.wc=0;
 
@@ -112,7 +115,7 @@ void setDataFree(Data * data){
  */
 /*----------------------------------------------------------------------------*/
 void allocateInstructionMemory(Data * data){
-    data->instArr = malloc(sizeof(Instruction)*(data->ic));
+    data->instArr = malloc(sizeof(Instruction)*(data->ic+1));
 }
 /*----------------------------------------------------------------------------*/
 /*
@@ -122,7 +125,7 @@ void allocateInstructionMemory(Data * data){
  */
 /*----------------------------------------------------------------------------*/
 void allocateExtraWordMemory(Data * data){
-     data->wordArr = malloc(sizeof(ExtraWord)*(data->wc));
+     data->wordArr = malloc(sizeof(ExtraWord)*(data->wc+1));
 }
 
 

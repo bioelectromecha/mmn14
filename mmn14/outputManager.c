@@ -18,25 +18,54 @@
 /*----------------------------------------------------------------------------*/
 void outputManager(Data * data, char * filename){
     char outputFileName[MAX_NAME_LEN];
+    int instructionIndex;
+    int dataIndex=0;
+    int wordIndex=0;
     strcpy(outputFileName,filename);
     strcat(outputFileName, ".ob");
 
 
     /* write the instruction and data lengths to file */
     writeLengthsToFile(data, outputFileName);
-    while(data->ic>=0){
-        if(data->instArr[data->ic].group==0){
-            createOutputZeroExtra(data, outputFileName);
+
+    /* write all the instructions to file */
+    for(instructionIndex=0;instructionIndex<data->ic;instructionIndex++){
+        if(data->instArr[instructionIndex].group==0){
+            createOutputZeroExtra(data, outputFileName,instructionIndex);
         }
-        if(data->instArr[data->ic].group==1){
-            createOutputOneExtra(data,outputFileName);
+        if(data->instArr[instructionIndex].group==1){
+            createOutputOneExtra(data,outputFileName,instructionIndex, wordIndex);
+            wordIndex++;
 
         }
-        if(data->instArr[data->ic].group==2){
-            createOutputTwoExtra(data,outputFileName);
+        if(data->instArr[instructionIndex].group==2){
+            createOutputTwoExtra(data,outputFileName, instructionIndex, wordIndex, wordIndex+1);
+            wordIndex+=2;
         }
     }
+    /* write the data to file */
+    for(dataIndex=0;dataIndex<data->dc;dataIndex++){
+        writeToOutputFile(decimalToBase32(data->tagArr[dataIndex].address), outputFileName);
+    }
 
+    /* remove the .ob extension */
+    strcpy(outputFileName,filename);
+
+    /* print externals to file */
+    if(data->exc>0){
+        strcat(outputFileName, ".ext");
+        writeExternToFile(data,outputFileName);
+    }
+
+    /* remove the .ext extension */
+    strcpy(outputFileName,filename);
+
+
+    /* print entries to file */
+    if(data->enc>0){
+        strcat(outputFileName, ".ent");
+        writeEntryToFile(data,outputFileName);
+    }
 }
 
 
@@ -47,21 +76,20 @@ void outputManager(Data * data, char * filename){
  * Output:		nothing
  */
 /*----------------------------------------------------------------------------*/
-void createOutputZeroExtra(Data * data, char * filename){
+void createOutputZeroExtra(Data * data, char * filename, int instructionIndex){
     unsigned long int output=0;
     char * base32output;
-    output+=decimalToBinary(data->instArr[data->ic].e_r_a);
-    output+=decimalToBinary(data->instArr[data->ic].destination_addressing)*100;
-    output+=decimalToBinary(data->instArr[data->ic].source_addressing)*10000;
-    output+=decimalToBinary(data->instArr[data->ic].opcode)*1000000;
-    output+=decimalToBinary(data->instArr[data->ic].group)*10000000000;
+    output+=decimalToBinary(data->instArr[instructionIndex].e_r_a);
+    output+=decimalToBinary(data->instArr[instructionIndex].destination_addressing)*100;
+    output+=decimalToBinary(data->instArr[instructionIndex].source_addressing)*10000;
+    output+=decimalToBinary(data->instArr[instructionIndex].opcode)*1000000;
+    output+=decimalToBinary(data->instArr[instructionIndex].group)*10000000000;
 
     output = binaryToDecimal(output);
 
     base32output = decimalToBase32(output);
     writeToOutputFile(base32output, filename);
     free(base32output);
-    data->ic--;
 }
 
 
@@ -72,16 +100,17 @@ void createOutputZeroExtra(Data * data, char * filename){
  * Output:		nothing
  */
 /*----------------------------------------------------------------------------*/
-void createOutputOneExtra(Data * data, char * filename){
+void createOutputOneExtra(Data * data, char * filename, int instructionIndex, int wordIndex ){
     unsigned long int output=0;
     char * base32output = NULL;
 
     /* write instruction to file */
-    output+=decimalToBinary(data->instArr[data->ic].e_r_a);
-    output+=decimalToBinary(data->instArr[data->ic].destination_addressing)*100;
-    output+=decimalToBinary(data->instArr[data->ic].source_addressing)*10000;
-    output+=decimalToBinary(data->instArr[data->ic].opcode)*1000000;
-    output+=decimalToBinary(data->instArr[data->ic].group)*10000000000;
+    output+=decimalToBinary(data->instArr[instructionIndex].e_r_a);
+    output+=decimalToBinary(data->instArr[instructionIndex].destination_addressing)*100;
+    output+=decimalToBinary(data->instArr[instructionIndex].source_addressing)*10000;
+    output+=decimalToBinary(data->instArr[instructionIndex].opcode)*1000000;
+    output+=decimalToBinary(data->instArr[instructionIndex].group)*10000000000;
+
     output = binaryToDecimal(output);
     base32output = decimalToBase32(output);
     writeToOutputFile(base32output, filename);
@@ -90,8 +119,8 @@ void createOutputOneExtra(Data * data, char * filename){
 
     /* write extra word to file */
     output=0;
-    output+=decimalToBinary(data->wordArr[data->wc].e_r_a);
-    output+= decimalToBinary(data->wordArr[data->wc].word)*100;
+    output+=decimalToBinary(data->wordArr[wordIndex].e_r_a);
+    output+= decimalToBinary(data->wordArr[wordIndex].word)*100;
     output = binaryToDecimal(output);
     base32output = decimalToBase32(output);
     writeToOutputFile(base32output, filename);
@@ -107,16 +136,16 @@ void createOutputOneExtra(Data * data, char * filename){
  * Output:		nothing
  */
 /*----------------------------------------------------------------------------*/
-void createOutputTwoExtra(Data * data,char * filename){
+void createOutputTwoExtra(Data * data,char * filename, int instructionIndex, int wordIndex1, int wordIndex2){
      unsigned long int output=0;
     char * base32output = NULL;
 
     /* write instruction to file */
-    output+=data->instArr[data->ic].e_r_a;
-    output+=decimalToBinary(data->instArr[data->ic].destination_addressing)*100;
-    output+=decimalToBinary(data->instArr[data->ic].source_addressing)*10000;
-    output+=decimalToBinary(data->instArr[data->ic].opcode)*1000000;
-    output+=decimalToBinary(data->instArr[data->ic].group)*10000000000;
+    output+=decimalToBinary(data->instArr[instructionIndex].e_r_a);
+    output+=decimalToBinary(data->instArr[instructionIndex].destination_addressing)*100;
+    output+=decimalToBinary(data->instArr[instructionIndex].source_addressing)*10000;
+    output+=decimalToBinary(data->instArr[instructionIndex].opcode)*1000000;
+    output+=decimalToBinary(data->instArr[instructionIndex].group)*10000000000;
     output = binaryToDecimal(output);
     base32output = decimalToBase32(output);
     writeToOutputFile(base32output, filename);
@@ -125,8 +154,8 @@ void createOutputTwoExtra(Data * data,char * filename){
 
     /* write first extra word to file */
     output=0;
-    output+=decimalToBinary(data->wordArr[data->wc].e_r_a);
-    output+= decimalToBinary(data->wordArr[data->wc].word)*100;
+    output+=decimalToBinary(data->wordArr[wordIndex1].e_r_a);
+    output+= decimalToBinary(data->wordArr[wordIndex1].word)*100;
     output = binaryToDecimal(output);
     base32output = decimalToBase32(output);
     writeToOutputFile(base32output, filename);
@@ -135,8 +164,8 @@ void createOutputTwoExtra(Data * data,char * filename){
 
     /* write second extra word to file */
     output=0;
-    output+=decimalToBinary(data->wordArr[data->wc].e_r_a);
-    output+= decimalToBinary(data->wordArr[data->wc].word)*100;
+    output+=decimalToBinary(data->wordArr[wordIndex2].e_r_a);
+    output+= decimalToBinary(data->wordArr[wordIndex2].word)*100;
     output = binaryToDecimal(output);
     base32output = decimalToBase32(output);
     writeToOutputFile(base32output, filename);
@@ -153,6 +182,10 @@ void createOutputTwoExtra(Data * data,char * filename){
 /*----------------------------------------------------------------------------*/
 void writeToOutputFile(char * output,char * filename) {
     FILE *file;
+
+    if(*output=='\0'){
+        return;
+    }
 
     file = fopen(filename, "a");
     fseek(file, -1 , SEEK_END);
@@ -195,39 +228,99 @@ void writeLengthsToFile(Data * data, char * filename){
 	fclose(file);
 
 }
-
+/*----------------------------------------------------------------------------*/
 /*
- * Description: Converts a number in base 10 to wanted base
- * Input:		1. Number in base 10
- * 				2. Wanted base
- * 				3. Minimal length of returned word
- * Output:		Number in wanted base
+ * Description: write all the entry variables to file
+ * Input:       Data sturct, string filename
+ * Output:		nothing
  */
+/*----------------------------------------------------------------------------*/
+void writeEntryToFile(Data * data,char * filename) {
+    FILE *file;
+    int i=0;
+
+    file = fopen(filename, "w");
+    for(i=0;i<data->enc;i++){
+        fputs(data->entryArr[i].name, file);
+        /* code is seperated by a new line */
+        fputc('\n', file);
+    }
+	fclose(file);
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: write all the external variables to file
+ * Input:       Data sturct, string filename
+ * Output:		nothing
+ */
+/*----------------------------------------------------------------------------*/
+void writeExternToFile(Data * data,char * filename) {
+    FILE *file;
+    int i=0;
+
+    file = fopen(filename, "w");
+    for(i=0;i<data->exc;i++){
+        fputs(data->externArr[i].name, file);
+        /* code is seperated by a new line */
+        fputc('\n', file);
+    }
+	fclose(file);
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: convert a number in base 10 to a string in base32
+ * Input:       int
+ * Output:		string
+ */
+/*----------------------------------------------------------------------------*/
 char* decimalToBase32(unsigned long int decNum){
 	char * output = NULL;
 	int remainder = 0;
 	int tempNum;
 	int counter=0;
-	/* Convert number to target base by :
-	 * 	1) Dividing the whole number
-	 * 	2) Take the reminder and append it to the result string
-	 * */
+
+    /* special handling in case of 0, because it won't go into while loop */
+	if(decNum==0){
+        output = realloc(output,sizeof(char));
+        *output = '0';
+	}
+
+
 	while (decNum != 0) {
 		output = realloc(output,sizeof(char) * (counter+1));
 		tempNum=decNum / BASE32;
 		remainder = decNum - tempNum * BASE32;
 		decNum = tempNum;
-		/* '0' is ascii 48 */
-        output[counter]='0'+remainder;
+
+        /* ascii numbers and characters are not a continuious */
+		if(remainder>9){
+            /* 'A' is ascii 65 */
+            output[counter]='A'+remainder-10;
+		}else{
+            /* '0' is ascii 48 */
+             output[counter]='0'+remainder;
+		}
+
         counter++;
 	}
 	output = realloc(output,sizeof(char) * (counter+1));
 	output[counter]='\0';
 	return output;
 }
-/* Function to convert binary to decimal*/
-int binaryToDecimal(int n){
-    int decimal=0;
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: convert a binary represeting integer to decimal
+ * Input:       int
+ * Output:		int
+ */
+/*----------------------------------------------------------------------------*/
+unsigned long int binaryToDecimal(unsigned long int n){
+    unsigned long int decimal=0;
     int i=0;
     int rem;
 
@@ -239,9 +332,19 @@ int binaryToDecimal(int n){
     }
     return decimal;
 }
- /* Function to convert decimal to binary.*/
-int decimalToBinary(int n){
-    int rem, i=1, binary=0;
+
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: convert a  decimal to a int representign a binary
+ * Input:       int
+ * Output:		int
+ */
+/*----------------------------------------------------------------------------*/
+unsigned long int decimalToBinary(unsigned long int n){
+    unsigned long int binary=0;
+    int rem;
+    int i=1;
     while (n!=0){
         rem=n%2;
         n/=2;

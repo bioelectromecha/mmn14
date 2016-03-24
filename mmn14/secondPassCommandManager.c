@@ -5,15 +5,14 @@
  ====================================================================================
  */
 
-
 #include "header.h"
 
 
 /*----------------------------------------------------------------------------*/
 /*
- * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .asm extension
- * Output:		machine code files (.o suffix), entry files, extern files
+ * Description: directs the parsing of all the commands during the second pass
+ * Input:       Data struct
+ * Output:		1 if no errors are found , 0 otherwise
  */
 /*----------------------------------------------------------------------------*/
 int secondPassCommandManager(Data * data){
@@ -42,9 +41,9 @@ int secondPassCommandManager(Data * data){
 
 /*----------------------------------------------------------------------------*/
 /*
- * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .asm extension
- * Output:		machine code files (.o suffix), entry files, extern files
+ * Description: handles commands with no operands
+ * Input:       Data struct, command string
+ * Output:		1 if no errors are found, 0 otherwise
  */
 /*----------------------------------------------------------------------------*/
 int zeroOperandsCommandHandler(Data * data, char * cmd){
@@ -55,9 +54,9 @@ int zeroOperandsCommandHandler(Data * data, char * cmd){
 
 /*----------------------------------------------------------------------------*/
 /*
- * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .asm extension
- * Output:		machine code files (.o suffix), entry files, extern files
+ * Description: handles commands with one operand
+ * Input:       Data struct, command string
+ * Output:		1 if no errors are found, 0 otherwise
  */
 /*----------------------------------------------------------------------------*/
 int oneOperandsCommandHandler(Data * data, char * cmd){
@@ -65,7 +64,7 @@ int oneOperandsCommandHandler(Data * data, char * cmd){
     char operand[30];
     getDestinationOperand(data, operand);
     addressingMethod = getAddressingMethod(data,operand);
-    if(checkDestinationOperandAddressing(addressingMethod,cmd)){
+    if(checkDestinationOperandAddressing(addressingMethod,cmd)==0){
         printf("[Error] on line %d: illegal addressing for this command\n",data->lc);
         return 0;
     }
@@ -82,8 +81,9 @@ int oneOperandsCommandHandler(Data * data, char * cmd){
 
 /*----------------------------------------------------------------------------*/
 /*
- * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .as
+ * Description: handles commands with two operands
+ * Input:       Data struct, command string
+ * Output:		1 if no errors are found, 0 otherwise
  */
 /*----------------------------------------------------------------------------*/
 int twoOperandsCommandHandler(Data * data, char * cmd){
@@ -128,9 +128,9 @@ int twoOperandsCommandHandler(Data * data, char * cmd){
 
 /*----------------------------------------------------------------------------*/
 /*
- * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .asm extension
- * Output:		machine code files (.o suffix), entry files, extern files
+ * Description: adds commands with no operands
+ * Input:       Data struct, command string
+ * Output:		1 if no errors are found, 0 otherwise
  */
 /*----------------------------------------------------------------------------*/
 int addZeroOperandCommand(Data * data, char * cmd){
@@ -149,9 +149,9 @@ int addZeroOperandCommand(Data * data, char * cmd){
 
 /*----------------------------------------------------------------------------*/
 /*
- * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .asm extension
- * Output:		machine code files (.o suffix), entry files, extern files
+ * Description: handles commands with no operands
+ * Input:       Data struct, command string, operand string, int addressing method
+ * Output:		1 if no errors are found, 0 otherwise
  */
 /*----------------------------------------------------------------------------*/
 int addOneOperandCommand(Data * data, char * cmd, char * operand, int addressingMethod){
@@ -198,9 +198,9 @@ int addOneOperandCommand(Data * data, char * cmd, char * operand, int addressing
 
 /*----------------------------------------------------------------------------*/
 /*
- * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .asm extension
- * Output:		machine code files (.o suffix), entry files, extern files
+ * Description: handles commands with two operands
+ * Input:       Data struct, command string, operand strings, int addressing method
+ * Output:		1 if no errors are found, 0 otherwise
  */
 /*----------------------------------------------------------------------------*/
 int addTwoOperandCommand(Data * data, char * cmd, char * operand1, char * operand2, int addressingMethod1, int addressingMethod2){
@@ -267,9 +267,9 @@ int addTwoOperandCommand(Data * data, char * cmd, char * operand1, char * operan
 
 /*----------------------------------------------------------------------------*/
 /*
- * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .asm extension
- * Output:		machine code files (.o suffix), entry files, extern files
+ * Description: whether or not it's a direct (tag) addressing method for the command
+ * Input:       Data struct, string tag
+ * Output:		1 if it is, 0 otherwise
  */
 /*----------------------------------------------------------------------------*/
 int getTagAddress(Data * data, char * tag){
@@ -302,9 +302,9 @@ int checkIfTagExists(Data * data, char * operand){
 
 /*----------------------------------------------------------------------------*/
 /*
- * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .asm extension
- * Output:		machine code files (.o suffix), entry files, extern files
+ * Description: return the source oeprand as a string
+ * Input:       Data struct, string operand
+ * Output:		1
  */
 /*----------------------------------------------------------------------------*/
 int getSourceOperand(Data * data, char * operand){
@@ -315,9 +315,9 @@ int getSourceOperand(Data * data, char * operand){
 
 /*----------------------------------------------------------------------------*/
 /*
- * Description: implements the first pass algorithm (from the course booklet)
- * Input:       Assembly file names as command line arguments, without the .asm extension
- * Output:		machine code files (.o suffix), entry files, extern files
+ * Description: gets the destination operand
+ * Input:       Data struct, string operand
+ * Output:		1
  */
 /*----------------------------------------------------------------------------*/
 int getDestinationOperand(Data * data, char * operand){
@@ -549,20 +549,46 @@ int getRegisterOperand(Data * data,char * operand){
  */
 /*----------------------------------------------------------------------------*/
 int getRandomOperand(Data* data,char * operand){
-int a = (rand()%8) - 1;
-    int numberRand = isRandomOperand(operand);
-    if (numberRand == ONE_STAR_RANDOM_OPERAND){
-        data->instArr[data->ic].rnd = 1;
+    int rand;
 
-        return (rand()%8) - 1;
+    /* get the random addressing method */
+    int numberRand = isRandomOperand(operand);
+    /* generate coresponding random numbers */
+    if (numberRand == ONE_STAR_RANDOM_OPERAND){
+        /* a number corresponding to r0 to r7 */
+        rand=randomGenerator(0,7);
+        /* set the random instruction field */
+        data->instArr[data->ic].rnd = 1;
+        return rand;
     }else if (numberRand == TWO_STAR_RANDOM_OPERAND){
+        /* a random immediate operand in range */
+        rand = randomGenerator(0,MAX_ASM_LINES);
+        /* set the random instruction field */
         data->instArr[data->ic].rnd = 2;
-        return (rand()%8000) +7;
+        return rand;
     }else if (numberRand == THREE_STAR_RANDOM_OPERAND){
+        /* a random tag address */
+        rand = randomGenerator(0,data->dc);
+        /* set the random instruction field */
         data->instArr[data->ic].rnd = 3;
-        int num = data->dc;
-        int rand2 = rand() % num;
-        return data-> tagArr[rand2+1].address;
+        return data->tagArr[rand].address;
     }
     return 0;
+}
+
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: random number generator ( within a given range )
+ * Input:       int lower bound, int upper bound
+ * Output:		integer
+ */
+/*----------------------------------------------------------------------------*/
+int randomGenerator(int a,int b){
+    srand(0);
+    if (a > b)
+        return((rand() % (a-b+1)) + b);
+    else if (b > a)
+        return((rand() % (b-a+1)) + a);
+    else
+        return a;
 }

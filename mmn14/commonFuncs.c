@@ -19,7 +19,7 @@ int checkLetterOrNumber(char c){
     if (checkLetters(c) == 1){
         return 1;
     }
-    if (((int)c >= 0)&&((int)c <= 9)){
+    if(c>= '0' && c <= '9'){
         return 1;
     }
     return 0;
@@ -50,7 +50,7 @@ void eatSpace(Data * data){
 }
 
 int isEndOfLine(char* pStr){
-    while (*(pStr) != '\n' && *(pStr) != EOF){
+    while (*(pStr) != '\n' && *(pStr) != '\0' && *(pStr) != EOF){
         if (isspace(*pStr)){
             pStr = pStr+1;
         }
@@ -184,7 +184,7 @@ void getTag(Data * data,char * tagGet){
         *tagGet='\0';
         return;
     }
-    while(!isspace(*c) && (*c != ':')){
+    while(!isspace(*c) && *c != ':' && *c != '\n'){
         if (checkLetterOrNumber(*c) == 0){
             *tagGet='\0';
             return;
@@ -192,7 +192,7 @@ void getTag(Data * data,char * tagGet){
         counter++;
         c++;
     }
-    if(isspace(*c)){
+    if(isspace(*c) || *c=='\n'){
         *tagGet='\0';
         return;
     }
@@ -203,7 +203,32 @@ void getTag(Data * data,char * tagGet){
         tag[counter] = '\0';
         strcpy(tagGet,tag);
     }
-
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*
+ * Description: get the tag from NOT begginig of the line
+ * Input:       pointer to Data struct, pointer to a character array
+ * Output:	    if tag is found tagGet will hold the tag, tagGet will be NULL otherwise
+ */
+/*----------------------------------------------------------------------------*/
+void getTagOperand(Data * data, char * tagGet){
+     char tag[MAX_TAG_LEN];
+     char * c = tag;
+     sscanf(data->line, "%30s", c);
+
+     if (checkLetters(*c)== 0){
+        return;
+    }
+
+    c++;
+    while(!isspace(*c) && *c != '\n' && *c !=EOF){
+        if (checkLetterOrNumber(*c) == 0){
+            return;
+        }
+        c++;
+    }
+    strcpy(tag,tagGet);
+    strcat(tagGet,"\n");
+}

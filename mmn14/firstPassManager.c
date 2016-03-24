@@ -117,7 +117,7 @@ int tagDupCheck(Data * data, char * tag){
  */
 /*----------------------------------------------------------------------------*/
 void addTag(Data * data, char * tag, int dirAddress){
-	data->tagArr = realloc(data->tagArr, sizeof(Tag)*(data->tc+1));
+	data->tagArr = realloc(data->tagArr, sizeof(Tag)*(data->tc+2));
 	strcpy(data->tagArr[data->tc].name,tag);
 	data->tagArr[data->tc].address=dirAddress;
 	data->tc++;
