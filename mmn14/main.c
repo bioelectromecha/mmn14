@@ -4,7 +4,7 @@
  ==========Random==========================================================================
  Date       :   20/3/2016
 
- Authors    :   Roman Smirnov 312914443, Stav Rockah 307900878
+ Authors    :   Person1, Person2
 
  Description: 	A C program which compiles assembly code into machine code
 
